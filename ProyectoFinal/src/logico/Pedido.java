@@ -3,14 +3,14 @@ package logico;
 import java.util.Date;
 import java.util.List;
 
-class Pedido {
+public class Pedido {
     private int id;
-    private Cliente cliente;
-    private List<Componente> componentes;
+    private Customer cliente;
+    private List<Component> componentes;
     private Date fechaPedido;
     private Date fechaEntrega;
 
-    public Pedido(int id, Cliente cliente, List<Componente> componentes, Date fechaPedido, Date fechaEntrega) {
+    public Pedido(int id, Customer cliente, List<Component> componentes, Date fechaPedido, Date fechaEntrega) {
         this.id = id;
         this.cliente = cliente;
         this.componentes = componentes;
@@ -20,8 +20,8 @@ class Pedido {
 
     // Getters y Setters
     public int getId() { return id; }
-    public Cliente getCliente() { return cliente; }
-    public List<Componente> getComponentes() { return componentes; }
+    public Customer getCliente() { return cliente; }
+    public List<Component> getComponentes() { return componentes; }
     public Date getFechaPedido() { return fechaPedido; }
     public Date getFechaEntrega() { return fechaEntrega; }
 }
