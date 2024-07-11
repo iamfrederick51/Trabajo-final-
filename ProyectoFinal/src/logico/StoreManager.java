@@ -12,7 +12,6 @@ public class StoreManager {
         this.customers = new ArrayList<>();
     }
 
-    // Component methods
     public void addComponent(Component component) {
         this.components.add(component);
     }
@@ -44,7 +43,6 @@ public class StoreManager {
         }
     }
 
-    // Customer methods
     public void addCustomer(Customer customer) {
         this.customers.add(customer);
     }
@@ -53,6 +51,7 @@ public class StoreManager {
         return customers;
     }
 }
+
 
 
 

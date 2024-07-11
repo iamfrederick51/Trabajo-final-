@@ -2,6 +2,8 @@ package visual;
 
 import javax.swing.*;
 
+import logico.Customer;
+import logico.HardDrive;
 import logico.Microprocessor;
 import logico.MotherBoard;
 import logico.Ram;
@@ -10,6 +12,7 @@ import model.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.*;
+import java.util.List;
 
 public class MainFrame extends JFrame {
     private StoreManager storeManager;
@@ -242,7 +245,7 @@ public class MainFrame extends JFrame {
                 String ramType = txtRamType.getText();
                 String[] connections = txtConnections.getText().split(",");
                 MotherBoard motherBoard = new MotherBoard(brand, model, serialNumber, price, quantity, socketType, ramType, connections);
-                motherBoard.setId(id); // Assuming you have setId method in Component class
+                motherBoard.setId(id);
                 storeManager.updateComponent(motherBoard);
             } else if (componentType.equals("Microprocessor")) {
                 String socketType = txtSocketType.getText();
@@ -284,10 +287,10 @@ public class MainFrame extends JFrame {
 
     private void updateComponentTable() {
         String[] columnNames = {"ID", "Brand", "Model", "Serial Number", "Price", "Quantity", "Type"};
-        List<Component> components = storeManager.getComponents();
+        List<logico.Component> components = storeManager.getComponents();
         String[][] data = new String[components.size()][7];
         for (int i = 0; i < components.size(); i++) {
-            Component component = components.get(i);
+            logico.Component component = components.get(i);
             data[i][0] = String.valueOf(component.getId());
             data[i][1] = component.getBrand();
             data[i][2] = component.getModel();
@@ -326,6 +329,5 @@ public class MainFrame extends JFrame {
         });
     }
 }
-
 
 
