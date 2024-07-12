@@ -1,14 +1,12 @@
 package visual;
 
 import javax.swing.*;
-
 import logico.Customer;
 import logico.HardDrive;
 import logico.Microprocessor;
 import logico.MotherBoard;
 import logico.Ram;
 import logico.StoreManager;
-import model.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.*;
@@ -42,6 +40,7 @@ public class MainFrame extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         getContentPane().setLayout(null);
 
+        // Component Management UI
         JLabel lblBrand = new JLabel("Brand:");
         lblBrand.setBounds(10, 10, 80, 25);
         getContentPane().add(lblBrand);
@@ -59,11 +58,11 @@ public class MainFrame extends JFrame {
         getContentPane().add(txtModel);
 
         JLabel lblSerialNumber = new JLabel("Serial Number:");
-        lblSerialNumber.setBounds(10, 70, 80, 25);
+        lblSerialNumber.setBounds(10, 70, 100, 25);
         getContentPane().add(lblSerialNumber);
 
         txtSerialNumber = new JTextField();
-        txtSerialNumber.setBounds(100, 70, 160, 25);
+        txtSerialNumber.setBounds(120, 70, 160, 25);
         getContentPane().add(txtSerialNumber);
 
         JLabel lblPrice = new JLabel("Price:");
@@ -129,6 +128,7 @@ public class MainFrame extends JFrame {
         tableComponents = new JTable();
         scrollPaneComponents.setViewportView(tableComponents);
 
+        // Customer Management UI
         JLabel lblFirstName = new JLabel("First Name:");
         lblFirstName.setBounds(10, 450, 80, 25);
         getContentPane().add(lblFirstName);
@@ -156,6 +156,14 @@ public class MainFrame extends JFrame {
         JButton btnAddCustomer = new JButton("Add Customer");
         btnAddCustomer.setBounds(10, 540, 160, 25);
         getContentPane().add(btnAddCustomer);
+
+        JButton btnUpdateCustomer = new JButton("Update Customer");
+        btnUpdateCustomer.setBounds(180, 540, 160, 25);
+        getContentPane().add(btnUpdateCustomer);
+
+        JButton btnDeleteCustomer = new JButton("Delete Customer");
+        btnDeleteCustomer.setBounds(350, 540, 160, 25);
+        getContentPane().add(btnDeleteCustomer);
 
         JScrollPane scrollPaneCustomers = new JScrollPane();
         scrollPaneCustomers.setBounds(300, 450, 670, 120);
@@ -189,6 +197,20 @@ public class MainFrame extends JFrame {
         btnAddCustomer.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 addCustomer();
+                updateCustomerTable();
+            }
+        });
+
+        btnUpdateCustomer.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                updateCustomer();
+                updateCustomerTable();
+            }
+        });
+
+        btnDeleteCustomer.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                deleteCustomer();
                 updateCustomerTable();
             }
         });
@@ -285,6 +307,27 @@ public class MainFrame extends JFrame {
         storeManager.addCustomer(customer);
     }
 
+    private void updateCustomer() {
+        int selectedRow = tableCustomers.getSelectedRow();
+        if (selectedRow != -1) {
+            int id = Integer.parseInt(tableCustomers.getValueAt(selectedRow, 0).toString());
+            String firstName = txtFirstName.getText();
+            String lastName = txtLastName.getText();
+            String address = txtAddress.getText();
+            Customer customer = new Customer(firstName, lastName, address);
+            customer.setId(id);
+            storeManager.updateCustomer(customer);
+        }
+    }
+
+    private void deleteCustomer() {
+        int selectedRow = tableCustomers.getSelectedRow();
+        if (selectedRow != -1) {
+            int id = Integer.parseInt(tableCustomers.getValueAt(selectedRow, 0).toString());
+            storeManager.removeCustomer(id);
+        }
+    }
+
     private void updateComponentTable() {
         String[] columnNames = {"ID", "Brand", "Model", "Serial Number", "Price", "Quantity", "Type"};
         List<logico.Component> components = storeManager.getComponents();
@@ -329,5 +372,3 @@ public class MainFrame extends JFrame {
         });
     }
 }
-
-

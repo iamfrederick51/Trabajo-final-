@@ -50,8 +50,20 @@ public class StoreManager {
     public List<Customer> getCustomers() {
         return customers;
     }
-}
 
+    public void updateCustomer(Customer updatedCustomer) {
+        for (int i = 0; i < customers.size(); i++) {
+            if (customers.get(i).getId() == updatedCustomer.getId()) {
+                customers.set(i, updatedCustomer);
+                break;
+            }
+        }
+    }
+
+    public void removeCustomer(int id) {
+        customers.removeIf(customer -> customer.getId() == id);
+    }
+}
 
 
 

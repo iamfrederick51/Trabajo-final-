@@ -1,22 +1,23 @@
 package logico;
 
 public class Customer {
-    private static int idCounter = 1;
     private int id;
     private String firstName;
     private String lastName;
     private String address;
 
     public Customer(String firstName, String lastName, String address) {
-        this.id = idCounter++;
         this.firstName = firstName;
         this.lastName = lastName;
         this.address = address;
     }
 
-    // Getters y setters...
     public int getId() {
         return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getFirstName() {
@@ -43,5 +44,4 @@ public class Customer {
         this.address = address;
     }
 }
-
 
