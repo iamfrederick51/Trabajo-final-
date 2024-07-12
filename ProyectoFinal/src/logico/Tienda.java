@@ -52,19 +52,6 @@ public class Tienda {
         return this.componentes.get(id);
     }
 
-    // Métodos para agregar clientes y realizar pedidos
-    public void agregarCliente(Cliente cliente) {
-        this.clientes.put(cliente.getId(), cliente);
-    }
-
-    public void eliminarCliente(int id) {
-        this.clientes.remove(id);
-    }
-
-    public Cliente buscarCliente(int id) {
-        return this.clientes.get(id);
-    }
-
     public void realizarPedido(Pedido pedido) {
         this.pedidos.put(pedido.getId(), pedido);
     }
@@ -76,6 +63,88 @@ public class Tienda {
     public Pedido buscarPedido(int id) {
         return this.pedidos.get(id);
     }
+
+
+
+    // Métodos para buscar componentes por tipo
+    public String buscarComponente(int id) {
+        Componente componente = this.componentes.get(id);
+        if (componente != null) {
+            if (componente instanceof DiscoDuro) {
+                return "DiscoDuro";
+            } else if (componente instanceof MemoriaRAM) {
+                return "MemoriaRAM";
+            } else if (componente instanceof Microprocesador) {
+                return "Microprocesador";
+            } else if (componente instanceof TarjetaMadre) {
+                return "TarjetaMadre";
+            } else {
+                return "Componente";
+            }
+        } else {
+            return "Componente con ID " + id + " no encontrado.";
+        }
+    }
+
+
+    // Método para actualizar el inventario
+    private void actualizarInventario(Pedido pedido) {
+        for (Map.Entry<Componente, Integer> entry : pedido.getComponentes().entrySet()) {
+            Componente componente = entry.getKey();
+            int cantidadPedida = entry.getValue();
+            Componente inventarioComponente = componentes.get(componente.getId());
+            if (inventarioComponente != null) {
+                int nuevaCantidad = inventarioComponente.getCantidadDisponible() - cantidadPedida;
+                inventarioComponente.setCantidadDisponible(nuevaCantidad);
+            }
+        }
+    }
+
+    // Métodos para agregar, eliminar, actualizar y buscar clientes
+    public void agregarCliente(Cliente cliente) {
+        if (cliente == null || cliente.getId() == 0 || cliente.getNombre().isEmpty() || cliente.getApellido().isEmpty()) {
+            System.out.println("Datos del cliente no válidos.");
+            return;
+        }
+        this.clientes.put(cliente.getId(), cliente);
+    }
+
+    public void eliminarCliente(int id) {
+        if (this.clientes.containsKey(id)) {
+            this.clientes.remove(id);
+        } else {
+            System.out.println("Cliente con ID " + id + " no encontrado.");
+        }
+    }
+
+    public Cliente buscarCliente(int id) {
+        Cliente cliente = this.clientes.get(id);
+        if (cliente != null) {
+            return cliente;
+        } else {
+            System.out.println("Cliente con ID " + id + " no encontrado.");
+            return null;
+        }
+    }
+
+    public void actualizarCliente(int id, Cliente clienteActualizado) {
+        if (this.clientes.containsKey(id)) {
+            this.clientes.put(id, clienteActualizado);
+        } else {
+            System.out.println("Cliente con ID " + id + " no encontrado.");
+        }
+    }
+
+    public void listarClientes() {
+        if (this.clientes.isEmpty()) {
+            System.out.println("No hay clientes registrados.");
+        } else {
+            for (Cliente cliente : this.clientes.values()) {
+                System.out.println("ID: " + cliente.getId() + ", Nombre: " + cliente.getNombre() + ", Apellido: " + cliente.getApellido() + ", Dirección: " + cliente.getDireccion());
+            }
+        }
+    }
+
 }
 
 
