@@ -1,362 +1,670 @@
 package visual;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+
 import logico.Customer;
-import logico.HardDrive;
-import logico.Microprocessor;
-import logico.MotherBoard;
-import logico.Ram;
 import logico.StoreManager;
+
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.*;
 import java.util.List;
+import java.util.ArrayList;
 
 public class MainFrame extends JFrame {
+    private List<User> users = new ArrayList<>();
+    private CardLayout cardLayout;
+    private JPanel mainPanel;
     private StoreManager storeManager;
-    private JTextField txtBrand;
-    private JTextField txtModel;
-    private JTextField txtSerialNumber;
-    private JTextField txtPrice;
-    private JTextField txtQuantity;
-    private JTextField txtSocketType;
-    private JTextField txtRamType;
-    private JTextField txtConnections;
-    private JTextField txtFirstName;
-    private JTextField txtLastName;
-    private JTextField txtAddress;
-    private JTable tableComponents;
-    private JTable tableCustomers;
-    private JComboBox<String> comboBoxComponentType;
 
     public MainFrame() {
         storeManager = new StoreManager();
+        users.add(new User("admin", "password", "Administrador")); // Default user
         initialize();
     }
 
     private void initialize() {
-        setTitle("PC Store Manager");
-        setBounds(100, 100, 1000, 600);
+        setTitle("PC Store La Pulguita");
+        setSize(1000, 700);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        getContentPane().setLayout(null);
+        setLocationRelativeTo(null);
 
-        // Component Management UI
-        JLabel lblBrand = new JLabel("Brand:");
-        lblBrand.setBounds(10, 10, 80, 25);
-        getContentPane().add(lblBrand);
+        cardLayout = new CardLayout();
+        mainPanel = new JPanel(cardLayout);
 
-        txtBrand = new JTextField();
-        txtBrand.setBounds(100, 10, 160, 25);
-        getContentPane().add(txtBrand);
+        mainPanel.add(createLoginPanel(), "login");
+        mainPanel.add(createRegisterPanel(), "register");
+        mainPanel.add(createAdminPanel(), "admin");
+        mainPanel.add(createUserPanel(), "user");
 
-        JLabel lblModel = new JLabel("Model:");
-        lblModel.setBounds(10, 40, 80, 25);
-        getContentPane().add(lblModel);
+        getContentPane().add(mainPanel);
 
-        txtModel = new JTextField();
-        txtModel.setBounds(100, 40, 160, 25);
-        getContentPane().add(txtModel);
+        cardLayout.show(mainPanel, "login");
+    }
 
-        JLabel lblSerialNumber = new JLabel("Serial Number:");
-        lblSerialNumber.setBounds(10, 70, 100, 25);
-        getContentPane().add(lblSerialNumber);
+    private JPanel createLoginPanel() {
+        JPanel loginPanel = new JPanel(new GridBagLayout());
+        loginPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
+        loginPanel.setBackground(Color.WHITE);
+        GridBagConstraints gbc = new GridBagConstraints();
 
-        txtSerialNumber = new JTextField();
-        txtSerialNumber.setBounds(120, 70, 160, 25);
-        getContentPane().add(txtSerialNumber);
+        JLabel titleLabel = new JLabel("PC Store La Pulguita");
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
+        titleLabel.setForeground(new Color(70, 130, 180));
 
-        JLabel lblPrice = new JLabel("Price:");
-        lblPrice.setBounds(10, 100, 80, 25);
-        getContentPane().add(lblPrice);
+        JLabel userLabel = new JLabel("Usuario:");
+        userLabel.setFont(new Font("Arial", Font.PLAIN, 18));
 
-        txtPrice = new JTextField();
-        txtPrice.setBounds(100, 100, 160, 25);
-        getContentPane().add(txtPrice);
+        JTextField userField = new JTextField(15);
+        userField.setFont(new Font("Arial", Font.PLAIN, 16));
 
-        JLabel lblQuantity = new JLabel("Quantity:");
-        lblQuantity.setBounds(10, 130, 80, 25);
-        getContentPane().add(lblQuantity);
+        JLabel passLabel = new JLabel("Contraseña:");
+        passLabel.setFont(new Font("Arial", Font.PLAIN, 18));
 
-        txtQuantity = new JTextField();
-        txtQuantity.setBounds(100, 130, 160, 25);
-        getContentPane().add(txtQuantity);
+        JPasswordField passField = new JPasswordField(15);
+        passField.setFont(new Font("Arial", Font.PLAIN, 16));
 
-        JLabel lblSocketType = new JLabel("Socket Type:");
-        lblSocketType.setBounds(10, 160, 80, 25);
-        getContentPane().add(lblSocketType);
+        JLabel roleLabel = new JLabel("Rol:");
+        roleLabel.setFont(new Font("Arial", Font.PLAIN, 18));
 
-        txtSocketType = new JTextField();
-        txtSocketType.setBounds(100, 160, 160, 25);
-        getContentPane().add(txtSocketType);
+        String[] roles = {"Administrador", "Usuario"};
+        JComboBox<String> roleCombo = new JComboBox<>(roles);
+        roleCombo.setFont(new Font("Arial", Font.PLAIN, 16));
 
-        JLabel lblRamType = new JLabel("RAM Type:");
-        lblRamType.setBounds(10, 190, 80, 25);
-        getContentPane().add(lblRamType);
-
-        txtRamType = new JTextField();
-        txtRamType.setBounds(100, 190, 160, 25);
-        getContentPane().add(txtRamType);
-
-        JLabel lblConnections = new JLabel("Connections:");
-        lblConnections.setBounds(10, 220, 80, 25);
-        getContentPane().add(lblConnections);
-
-        txtConnections = new JTextField();
-        txtConnections.setBounds(100, 220, 160, 25);
-        getContentPane().add(txtConnections);
-
-        comboBoxComponentType = new JComboBox<>(new String[]{"MotherBoard", "Microprocessor", "Ram", "HardDrive"});
-        comboBoxComponentType.setBounds(100, 250, 160, 25);
-        getContentPane().add(comboBoxComponentType);
-
-        JButton btnAddComponent = new JButton("Add Component");
-        btnAddComponent.setBounds(10, 280, 160, 25);
-        getContentPane().add(btnAddComponent);
-
-        JButton btnUpdateComponent = new JButton("Update Component");
-        btnUpdateComponent.setBounds(180, 280, 160, 25);
-        getContentPane().add(btnUpdateComponent);
-
-        JButton btnDeleteComponent = new JButton("Delete Component");
-        btnDeleteComponent.setBounds(350, 280, 160, 25);
-        getContentPane().add(btnDeleteComponent);
-
-        JScrollPane scrollPaneComponents = new JScrollPane();
-        scrollPaneComponents.setBounds(10, 320, 960, 120);
-        getContentPane().add(scrollPaneComponents);
-
-        tableComponents = new JTable();
-        scrollPaneComponents.setViewportView(tableComponents);
-
-        // Customer Management UI
-        JLabel lblFirstName = new JLabel("First Name:");
-        lblFirstName.setBounds(10, 450, 80, 25);
-        getContentPane().add(lblFirstName);
-
-        txtFirstName = new JTextField();
-        txtFirstName.setBounds(100, 450, 160, 25);
-        getContentPane().add(txtFirstName);
-
-        JLabel lblLastName = new JLabel("Last Name:");
-        lblLastName.setBounds(10, 480, 80, 25);
-        getContentPane().add(lblLastName);
-
-        txtLastName = new JTextField();
-        txtLastName.setBounds(100, 480, 160, 25);
-        getContentPane().add(txtLastName);
-
-        JLabel lblAddress = new JLabel("Address:");
-        lblAddress.setBounds(10, 510, 80, 25);
-        getContentPane().add(lblAddress);
-
-        txtAddress = new JTextField();
-        txtAddress.setBounds(100, 510, 160, 25);
-        getContentPane().add(txtAddress);
-
-        JButton btnAddCustomer = new JButton("Add Customer");
-        btnAddCustomer.setBounds(10, 540, 160, 25);
-        getContentPane().add(btnAddCustomer);
-
-        JButton btnUpdateCustomer = new JButton("Update Customer");
-        btnUpdateCustomer.setBounds(180, 540, 160, 25);
-        getContentPane().add(btnUpdateCustomer);
-
-        JButton btnDeleteCustomer = new JButton("Delete Customer");
-        btnDeleteCustomer.setBounds(350, 540, 160, 25);
-        getContentPane().add(btnDeleteCustomer);
-
-        JScrollPane scrollPaneCustomers = new JScrollPane();
-        scrollPaneCustomers.setBounds(300, 450, 670, 120);
-        getContentPane().add(scrollPaneCustomers);
-
-        tableCustomers = new JTable();
-        scrollPaneCustomers.setViewportView(tableCustomers);
-
-        // Event Listeners
-        btnAddComponent.addActionListener(new ActionListener() {
+        JButton loginButton = createStyledButton("Iniciar Sesión");
+        loginButton.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
-                addComponent();
-                updateComponentTable();
+                String username = userField.getText();
+                String password = new String(passField.getPassword());
+                if (authenticate(username, password, roleCombo.getSelectedItem().toString())) {
+                    if (roleCombo.getSelectedItem().toString().equals("Administrador")) {
+                        cardLayout.show(mainPanel, "admin");
+                    } else {
+                        cardLayout.show(mainPanel, "user");
+                    }
+                }
             }
         });
 
-        btnUpdateComponent.addActionListener(new ActionListener() {
+        JButton registerButton = createStyledButton("Registrarse");
+        registerButton.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
-                updateComponent();
-                updateComponentTable();
+                cardLayout.show(mainPanel, "register");
             }
         });
 
-        btnDeleteComponent.addActionListener(new ActionListener() {
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.gridwidth = 2;
+        gbc.insets = new Insets(10, 10, 10, 10);
+        loginPanel.add(titleLabel, gbc);
+
+        gbc.gridy = 1;
+        gbc.gridwidth = 1;
+        loginPanel.add(userLabel, gbc);
+
+        gbc.gridx = 1;
+        loginPanel.add(userField, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        loginPanel.add(passLabel, gbc);
+
+        gbc.gridx = 1;
+        loginPanel.add(passField, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy = 3;
+        loginPanel.add(roleLabel, gbc);
+
+        gbc.gridx = 1;
+        loginPanel.add(roleCombo, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy = 4;
+        loginPanel.add(loginButton, gbc);
+
+        gbc.gridx = 1;
+        loginPanel.add(registerButton, gbc);
+
+        return loginPanel;
+    }
+
+    private JPanel createRegisterPanel() {
+        JPanel registerPanel = new JPanel(new GridBagLayout());
+        registerPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
+        registerPanel.setBackground(Color.WHITE);
+        GridBagConstraints gbc = new GridBagConstraints();
+
+        JLabel titleLabel = new JLabel("Registrar Usuario");
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
+        titleLabel.setForeground(new Color(70, 130, 180));
+
+        JLabel userLabel = new JLabel("Nuevo Usuario:");
+        userLabel.setFont(new Font("Arial", Font.PLAIN, 18));
+
+        JTextField usernameField = new JTextField(15);
+        usernameField.setFont(new Font("Arial", Font.PLAIN, 16));
+
+        JLabel passLabel = new JLabel("Nueva Contraseña:");
+        passLabel.setFont(new Font("Arial", Font.PLAIN, 18));
+
+        JPasswordField passwordField = new JPasswordField(15);
+        passwordField.setFont(new Font("Arial", Font.PLAIN, 16));
+
+        JLabel roleLabel = new JLabel("Rol:");
+        roleLabel.setFont(new Font("Arial", Font.PLAIN, 18));
+
+        String[] roles = {"Administrador", "Usuario"};
+        JComboBox<String> roleCombo = new JComboBox<>(roles);
+        roleCombo.setFont(new Font("Arial", Font.PLAIN, 16));
+
+        JButton createAccountButton = createStyledButton("Crear Cuenta");
+        createAccountButton.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
-                deleteComponent();
-                updateComponentTable();
+                String newUsername = usernameField.getText();
+                String newPassword = new String(passwordField.getPassword());
+                String role = roleCombo.getSelectedItem().toString();
+                if (createUser(newUsername, newPassword, role)) {
+                    JOptionPane.showMessageDialog(registerPanel, "Cuenta creada exitosamente.");
+                    cardLayout.show(mainPanel, "login");
+                } else {
+                    JOptionPane.showMessageDialog(registerPanel, "El nombre de usuario ya existe.");
+                }
             }
         });
 
-        btnAddCustomer.addActionListener(new ActionListener() {
+        JButton backButton = createStyledButton("Atrás");
+        backButton.setBackground(new Color(255, 99, 71));
+        backButton.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
-                addCustomer();
-                updateCustomerTable();
+                cardLayout.show(mainPanel, "login");
             }
         });
 
-        btnUpdateCustomer.addActionListener(new ActionListener() {
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.gridwidth = 2;
+        gbc.insets = new Insets(20, 10, 30, 10);
+        gbc.anchor = GridBagConstraints.CENTER;
+        registerPanel.add(titleLabel, gbc);
+
+        gbc.gridwidth = 1;
+        gbc.gridy = 1;
+        gbc.insets = new Insets(10, 10, 10, 10);
+        gbc.anchor = GridBagConstraints.WEST;
+        registerPanel.add(userLabel, gbc);
+
+        gbc.gridx = 1;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        registerPanel.add(usernameField, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        registerPanel.add(passLabel, gbc);
+
+        gbc.gridx = 1;
+        registerPanel.add(passwordField, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy = 3;
+        registerPanel.add(roleLabel, gbc);
+
+        gbc.gridx = 1;
+        registerPanel.add(roleCombo, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy = 4;
+        gbc.gridwidth = 2;
+        gbc.fill = GridBagConstraints.NONE;
+        gbc.anchor = GridBagConstraints.CENTER;
+        gbc.insets = new Insets(20, 10, 10, 10);
+        registerPanel.add(createAccountButton, gbc);
+
+        gbc.gridy = 5;
+        registerPanel.add(backButton, gbc);
+
+        return registerPanel;
+    }
+
+    private JPanel createAdminPanel() {
+        JPanel adminPanel = new JPanel(new BorderLayout());
+        adminPanel.setBackground(Color.WHITE);
+
+        JPanel menuPanel = new JPanel(new GridLayout(1, 4, 10, 10));
+        menuPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
+        menuPanel.setBackground(new Color(230, 230, 250));
+
+        JButton btnComponentManagement = createStyledButton("Gestión de Componentes");
+        JButton btnCustomerManagement = createStyledButton("Gestión de Clientes");
+        JButton btnSalesManagement = createStyledButton("Gestión de Ventas");
+        JButton btnExit = createStyledButton("Salir");
+
+        menuPanel.add(btnComponentManagement);
+        menuPanel.add(btnCustomerManagement);
+        menuPanel.add(btnSalesManagement);
+        menuPanel.add(btnExit);
+
+        adminPanel.add(menuPanel, BorderLayout.NORTH);
+
+        btnComponentManagement.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
-                updateCustomer();
-                updateCustomerTable();
+                adminPanel.removeAll();
+                adminPanel.add(menuPanel, BorderLayout.NORTH);
+                adminPanel.add(createComponentManagementPanel(), BorderLayout.CENTER);
+                adminPanel.revalidate();
+                adminPanel.repaint();
             }
         });
 
-        btnDeleteCustomer.addActionListener(new ActionListener() {
+        btnCustomerManagement.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
-                deleteCustomer();
-                updateCustomerTable();
+                adminPanel.removeAll();
+                adminPanel.add(menuPanel, BorderLayout.NORTH);
+                adminPanel.add(createCustomerManagementPanel(), BorderLayout.CENTER);
+                adminPanel.revalidate();
+                adminPanel.repaint();
             }
         });
 
-        updateComponentTable();
-        updateCustomerTable();
+        btnSalesManagement.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                adminPanel.removeAll();
+                adminPanel.add(menuPanel, BorderLayout.NORTH);
+                adminPanel.add(createSalesManagementPanel(), BorderLayout.CENTER);
+                adminPanel.revalidate();
+                adminPanel.repaint();
+            }
+        });
+
+        btnExit.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                cardLayout.show(mainPanel, "login");
+            }
+        });
+
+        adminPanel.add(new JLabel("Seleccione una opción del menú para comenzar"), BorderLayout.CENTER);
+        return adminPanel;
     }
 
-    private void addComponent() {
-        String brand = txtBrand.getText();
-        String model = txtModel.getText();
-        String serialNumber = txtSerialNumber.getText();
-        double price = Double.parseDouble(txtPrice.getText());
-        int quantity = Integer.parseInt(txtQuantity.getText());
-        String componentType = (String) comboBoxComponentType.getSelectedItem();
+    private JPanel createComponentManagementPanel() {
+        JPanel panel = new JPanel(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
 
-        if (componentType.equals("MotherBoard")) {
-            String socketType = txtSocketType.getText();
-            String ramType = txtRamType.getText();
-            String[] connections = txtConnections.getText().split(",");
-            MotherBoard motherBoard = new MotherBoard(brand, model, serialNumber, price, quantity, socketType, ramType, connections);
-            storeManager.addComponent(motherBoard);
-        } else if (componentType.equals("Microprocessor")) {
-            String socketType = txtSocketType.getText();
-            double speed = Double.parseDouble(txtRamType.getText());
-            Microprocessor microprocessor = new Microprocessor(brand, model, serialNumber, price, quantity, socketType, speed);
-            storeManager.addComponent(microprocessor);
-        } else if (componentType.equals("Ram")) {
-            int size = Integer.parseInt(txtSocketType.getText());
-            String type = txtRamType.getText();
-            Ram ram = new Ram(brand, model, serialNumber, price, quantity, size, type);
-            storeManager.addComponent(ram);
-        } else if (componentType.equals("HardDrive")) {
-            int capacity = Integer.parseInt(txtSocketType.getText());
-            String connectionType = txtRamType.getText();
-            HardDrive hardDrive = new HardDrive(brand, model, serialNumber, price, quantity, capacity, connectionType);
-            storeManager.addComponent(hardDrive);
-        }
+        JLabel titleLabel = new JLabel("Gestión de Componentes");
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.gridwidth = 2;
+        gbc.insets = new Insets(10, 10, 10, 10);
+        panel.add(titleLabel, gbc);
+
+        JLabel lblBrand = new JLabel("Marca:");
+        lblBrand.setFont(new Font("Arial", Font.PLAIN, 18));
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        gbc.gridwidth = 1;
+        panel.add(lblBrand, gbc);
+
+        JTextField txtBrand = new JTextField(15);
+        txtBrand.setFont(new Font("Arial", Font.PLAIN, 16));
+        gbc.gridx = 1;
+        panel.add(txtBrand, gbc);
+
+        JLabel lblModel = new JLabel("Modelo:");
+        lblModel.setFont(new Font("Arial", Font.PLAIN, 18));
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        panel.add(lblModel, gbc);
+
+        JTextField txtModel = new JTextField(15);
+        txtModel.setFont(new Font("Arial", Font.PLAIN, 16));
+        gbc.gridx = 1;
+        panel.add(txtModel, gbc);
+
+        JLabel lblSerialNumber = new JLabel("Número de Serie:");
+        lblSerialNumber.setFont(new Font("Arial", Font.PLAIN, 18));
+        gbc.gridx = 0;
+        gbc.gridy = 3;
+        panel.add(lblSerialNumber, gbc);
+
+        JTextField txtSerialNumber = new JTextField(15);
+        txtSerialNumber.setFont(new Font("Arial", Font.PLAIN, 16));
+        gbc.gridx = 1;
+        panel.add(txtSerialNumber, gbc);
+
+        JLabel lblPrice = new JLabel("Precio:");
+        lblPrice.setFont(new Font("Arial", Font.PLAIN, 18));
+        gbc.gridx = 0;
+        gbc.gridy = 4;
+        panel.add(lblPrice, gbc);
+
+        JTextField txtPrice = new JTextField(15);
+        txtPrice.setFont(new Font("Arial", Font.PLAIN, 16));
+        gbc.gridx = 1;
+        panel.add(txtPrice, gbc);
+
+        JLabel lblQuantity = new JLabel("Cantidad:");
+        lblQuantity.setFont(new Font("Arial", Font.PLAIN, 18));
+        gbc.gridx = 0;
+        gbc.gridy = 5;
+        panel.add(lblQuantity, gbc);
+
+        JTextField txtQuantity = new JTextField(15);
+        txtQuantity.setFont(new Font("Arial", Font.PLAIN, 16));
+        gbc.gridx = 1;
+        panel.add(txtQuantity, gbc);
+
+        JLabel lblSocketType = new JLabel("Tipo de Socket:");
+        lblSocketType.setFont(new Font("Arial", Font.PLAIN, 18));
+        gbc.gridx = 0;
+        gbc.gridy = 6;
+        panel.add(lblSocketType, gbc);
+
+        JTextField txtSocketType = new JTextField(15);
+        txtSocketType.setFont(new Font("Arial", Font.PLAIN, 16));
+        gbc.gridx = 1;
+        panel.add(txtSocketType, gbc);
+
+        JLabel lblRamType = new JLabel("Tipo de RAM:");
+        lblRamType.setFont(new Font("Arial", Font.PLAIN, 18));
+        gbc.gridx = 0;
+        gbc.gridy = 7;
+        panel.add(lblRamType, gbc);
+
+        JTextField txtRamType = new JTextField(15);
+        txtRamType.setFont(new Font("Arial", Font.PLAIN, 16));
+        gbc.gridx = 1;
+        panel.add(txtRamType, gbc);
+
+        JLabel lblConnections = new JLabel("Conexiones:");
+        lblConnections.setFont(new Font("Arial", Font.PLAIN, 18));
+        gbc.gridx = 0;
+        gbc.gridy = 8;
+        panel.add(lblConnections, gbc);
+
+        JTextField txtConnections = new JTextField(15);
+        txtConnections.setFont(new Font("Arial", Font.PLAIN, 16));
+        gbc.gridx = 1;
+        panel.add(txtConnections, gbc);
+
+        JLabel lblComponentType = new JLabel("Tipo de Componente:");
+        lblComponentType.setFont(new Font("Arial", Font.PLAIN, 18));
+        gbc.gridx = 0;
+        gbc.gridy = 9;
+        panel.add(lblComponentType, gbc);
+
+        JComboBox<String> comboBoxComponentType = new JComboBox<>(new String[]{"MotherBoard", "Microprocessor", "Ram", "HardDrive"});
+        comboBoxComponentType.setFont(new Font("Arial", Font.PLAIN, 16));
+        gbc.gridx = 1;
+        panel.add(comboBoxComponentType, gbc);
+
+        JButton btnAddComponent = createStyledButton("Agregar Componente");
+        gbc.gridx = 0;
+        gbc.gridy = 10;
+        gbc.gridwidth = 1;
+        panel.add(btnAddComponent, gbc);
+
+        JButton btnUpdateComponent = createStyledButton("Actualizar Componente");
+        gbc.gridx = 1;
+        panel.add(btnUpdateComponent, gbc);
+
+        JButton btnDeleteComponent = createStyledButton("Eliminar Componente");
+        btnDeleteComponent.setBackground(new Color(255, 99, 71));
+        gbc.gridx = 2;
+        panel.add(btnDeleteComponent, gbc);
+
+        return panel;
     }
 
-    private void updateComponent() {
-        int selectedRow = tableComponents.getSelectedRow();
-        if (selectedRow != -1) {
-            int id = Integer.parseInt(tableComponents.getValueAt(selectedRow, 0).toString());
-            String brand = txtBrand.getText();
-            String model = txtModel.getText();
-            String serialNumber = txtSerialNumber.getText();
-            double price = Double.parseDouble(txtPrice.getText());
-            int quantity = Integer.parseInt(txtQuantity.getText());
-            String componentType = (String) comboBoxComponentType.getSelectedItem();
+    private JPanel createCustomerManagementPanel() {
+        JPanel panel = new JPanel(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
 
-            if (componentType.equals("MotherBoard")) {
-                String socketType = txtSocketType.getText();
-                String ramType = txtRamType.getText();
-                String[] connections = txtConnections.getText().split(",");
-                MotherBoard motherBoard = new MotherBoard(brand, model, serialNumber, price, quantity, socketType, ramType, connections);
-                motherBoard.setId(id);
-                storeManager.updateComponent(motherBoard);
-            } else if (componentType.equals("Microprocessor")) {
-                String socketType = txtSocketType.getText();
-                double speed = Double.parseDouble(txtRamType.getText());
-                Microprocessor microprocessor = new Microprocessor(brand, model, serialNumber, price, quantity, socketType, speed);
-                microprocessor.setId(id);
-                storeManager.updateComponent(microprocessor);
-            } else if (componentType.equals("Ram")) {
-                int size = Integer.parseInt(txtSocketType.getText());
-                String type = txtRamType.getText();
-                Ram ram = new Ram(brand, model, serialNumber, price, quantity, size, type);
-                ram.setId(id);
-                storeManager.updateComponent(ram);
-            } else if (componentType.equals("HardDrive")) {
-                int capacity = Integer.parseInt(txtSocketType.getText());
-                String connectionType = txtRamType.getText();
-                HardDrive hardDrive = new HardDrive(brand, model, serialNumber, price, quantity, capacity, connectionType);
-                hardDrive.setId(id);
-                storeManager.updateComponent(hardDrive);
+        JLabel titleLabel = new JLabel("Gestión de Clientes");
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.gridwidth = 2;
+        gbc.insets = new Insets(10, 10, 10, 10);
+        panel.add(titleLabel, gbc);
+
+        JLabel lblFirstName = new JLabel("Nombre:");
+        lblFirstName.setFont(new Font("Arial", Font.PLAIN, 18));
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        gbc.gridwidth = 1;
+        panel.add(lblFirstName, gbc);
+
+        JTextField txtFirstName = new JTextField(15);
+        txtFirstName.setFont(new Font("Arial", Font.PLAIN, 16));
+        gbc.gridx = 1;
+        panel.add(txtFirstName, gbc);
+
+        JLabel lblLastName = new JLabel("Apellido:");
+        lblLastName.setFont(new Font("Arial", Font.PLAIN, 18));
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        panel.add(lblLastName, gbc);
+
+        JTextField txtLastName = new JTextField(15);
+        txtLastName.setFont(new Font("Arial", Font.PLAIN, 16));
+        gbc.gridx = 1;
+        panel.add(txtLastName, gbc);
+
+        JLabel lblAddress = new JLabel("Dirección:");
+        lblAddress.setFont(new Font("Arial", Font.PLAIN, 18));
+        gbc.gridx = 0;
+        gbc.gridy = 3;
+        panel.add(lblAddress, gbc);
+
+        JTextField txtAddress = new JTextField(15);
+        txtAddress.setFont(new Font("Arial", Font.PLAIN, 16));
+        gbc.gridx = 1;
+        panel.add(txtAddress, gbc);
+
+        JLabel lblEmail = new JLabel("Email:");
+        lblEmail.setFont(new Font("Arial", Font.PLAIN, 18));
+        gbc.gridx = 0;
+        gbc.gridy = 4;
+        panel.add(lblEmail, gbc);
+
+        JTextField txtEmail = new JTextField(15);
+        txtEmail.setFont(new Font("Arial", Font.PLAIN, 16));
+        gbc.gridx = 1;
+        panel.add(txtEmail, gbc);
+
+        JLabel lblPhone = new JLabel("Teléfono:");
+        lblPhone.setFont(new Font("Arial", Font.PLAIN, 18));
+        gbc.gridx = 0;
+        gbc.gridy = 5;
+        panel.add(lblPhone, gbc);
+
+        JTextField txtPhone = new JTextField(15);
+        txtPhone.setFont(new Font("Arial", Font.PLAIN, 16));
+        gbc.gridx = 1;
+        panel.add(txtPhone, gbc);
+
+        JButton btnAddCustomer = createStyledButton("Agregar Cliente");
+        gbc.gridx = 0;
+        gbc.gridy = 6;
+        gbc.gridwidth = 1;
+        panel.add(btnAddCustomer, gbc);
+
+        JButton btnUpdateCustomer = createStyledButton("Actualizar Cliente");
+        gbc.gridx = 1;
+        panel.add(btnUpdateCustomer, gbc);
+
+        JButton btnDeleteCustomer = createStyledButton("Eliminar Cliente");
+        btnDeleteCustomer.setBackground(new Color(255, 99, 71));
+        gbc.gridx = 2;
+        panel.add(btnDeleteCustomer, gbc);
+
+        return panel;
+    }
+
+    private JPanel createSalesManagementPanel() {
+        JPanel panel = new JPanel(new BorderLayout());
+        JLabel titleLabel = new JLabel("Gestión de Ventas");
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
+        titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        panel.add(titleLabel, BorderLayout.NORTH);
+
+        JButton btnNewSale = createStyledButton("Nueva Venta");
+        btnNewSale.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                createNewSale();
+            }
+        });
+
+        JButton btnUpdateSale = createStyledButton("Actualizar Venta");
+        btnUpdateSale.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                updateSale();
+            }
+        });
+
+        JButton btnDeleteSale = createStyledButton("Eliminar Venta");
+        btnDeleteSale.setBackground(new Color(255, 99, 71));
+        btnDeleteSale.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                deleteSale();
+            }
+        });
+
+        JPanel buttonPanel = new JPanel(new GridLayout(1, 3, 10, 10));
+        buttonPanel.add(btnNewSale);
+        buttonPanel.add(btnUpdateSale);
+        buttonPanel.add(btnDeleteSale);
+
+        panel.add(buttonPanel, BorderLayout.SOUTH);
+
+        return panel;
+    }
+
+    private void createNewSale() {
+        JFrame saleFrame = new JFrame("Nueva Venta");
+        saleFrame.setSize(400, 300);
+        saleFrame.setLocationRelativeTo(null);
+
+        JPanel salePanel = new JPanel(new GridLayout(6, 2, 10, 10));
+        salePanel.setBorder(new EmptyBorder(10, 10, 10, 10));
+
+        JLabel lblCustomer = new JLabel("Cliente:");
+        JComboBox<Customer> customerComboBox = new JComboBox<>(storeManager.getCustomers().toArray(new Customer[0]));
+        salePanel.add(lblCustomer);
+        salePanel.add(customerComboBox);
+
+        JLabel lblComponent = new JLabel("Componente:");
+        JComboBox<Component> componentComboBox = new JComboBox<>(storeManager.getComponents().toArray(new Component[0]));
+        salePanel.add(lblComponent);
+        salePanel.add(componentComboBox);
+
+        JLabel lblQuantity = new JLabel("Cantidad:");
+        JTextField txtQuantity = new JTextField();
+        salePanel.add(lblQuantity);
+        salePanel.add(txtQuantity);
+
+        JLabel lblPrice = new JLabel("Precio Total:");
+        JTextField txtPrice = new JTextField();
+        txtPrice.setEditable(false);
+        salePanel.add(lblPrice);
+        salePanel.add(txtPrice);
+
+        JButton btnCalculate = createStyledButton("Calcular Precio");
+        btnCalculate.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Component selectedComponent = (Component) componentComboBox.getSelectedItem();
+                int quantity = Integer.parseInt(txtQuantity.getText());
+                if (selectedComponent != null) {
+                    double totalPrice = selectedComponent.getPrice() * quantity;
+                    txtPrice.setText(String.valueOf(totalPrice));
+                }
+            }
+        });
+        salePanel.add(btnCalculate);
+
+        JButton btnCompleteSale = createStyledButton("Completar Venta");
+        btnCompleteSale.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Customer selectedCustomer = (Customer) customerComboBox.getSelectedItem();
+                Component selectedComponent = (Component) componentComboBox.getSelectedItem();
+                int quantity = Integer.parseInt(txtQuantity.getText());
+                double totalPrice = Double.parseDouble(txtPrice.getText());
+
+                if (selectedCustomer != null && selectedComponent != null) {
+                    storeManager.addSale(new Sale(selectedCustomer, selectedComponent, quantity, totalPrice));
+                    JOptionPane.showMessageDialog(saleFrame, "Venta completada con éxito.");
+                    saleFrame.dispose();
+                }
+            }
+        });
+        salePanel.add(btnCompleteSale);
+
+        saleFrame.add(salePanel);
+        saleFrame.setVisible(true);
+    }
+
+
+    private void updateSale() {
+        // Implementar lógica para actualizar una venta existente
+    }
+
+    private void deleteSale() {
+        // Implementar lógica para eliminar una venta
+    }
+
+    private JPanel createUserPanel() {
+        JPanel userPanel = new JPanel();
+        userPanel.setBackground(Color.WHITE);
+        userPanel.add(new JLabel("Bienvenido Usuario"));
+        return userPanel;
+    }
+
+    private boolean authenticate(String username, String password, String role) {
+        for (User user : users) {
+            if (user.getUsername().equals(username) && user.getPassword().equals(password)) {
+                if ((role.equals("Administrador") && user.getRole().equals(role)) ||
+                    (role.equals("Usuario") && user.getRole().equals(role))) {
+                    return true;
+                }
             }
         }
+        JOptionPane.showMessageDialog(this, "Usuario, contraseña o rol incorrectos.");
+        return false;
     }
 
-    private void deleteComponent() {
-        int selectedRow = tableComponents.getSelectedRow();
-        if (selectedRow != -1) {
-            int id = Integer.parseInt(tableComponents.getValueAt(selectedRow, 0).toString());
-            storeManager.removeComponent(id);
+    private boolean createUser(String username, String password, String role) {
+        for (User user : users) {
+            if (user.getUsername().equals(username)) {
+                return false;
+            }
         }
+        users.add(new User(username, password, role));
+        return true;
     }
 
-    private void addCustomer() {
-        String firstName = txtFirstName.getText();
-        String lastName = txtLastName.getText();
-        String address = txtAddress.getText();
-        Customer customer = new Customer(firstName, lastName, address);
-        storeManager.addCustomer(customer);
-    }
-
-    private void updateCustomer() {
-        int selectedRow = tableCustomers.getSelectedRow();
-        if (selectedRow != -1) {
-            int id = Integer.parseInt(tableCustomers.getValueAt(selectedRow, 0).toString());
-            String firstName = txtFirstName.getText();
-            String lastName = txtLastName.getText();
-            String address = txtAddress.getText();
-            Customer customer = new Customer(firstName, lastName, address);
-            customer.setId(id);
-            storeManager.updateCustomer(customer);
-        }
-    }
-
-    private void deleteCustomer() {
-        int selectedRow = tableCustomers.getSelectedRow();
-        if (selectedRow != -1) {
-            int id = Integer.parseInt(tableCustomers.getValueAt(selectedRow, 0).toString());
-            storeManager.removeCustomer(id);
-        }
-    }
-
-    private void updateComponentTable() {
-        String[] columnNames = {"ID", "Brand", "Model", "Serial Number", "Price", "Quantity", "Type"};
-        List<logico.Component> components = storeManager.getComponents();
-        String[][] data = new String[components.size()][7];
-        for (int i = 0; i < components.size(); i++) {
-            logico.Component component = components.get(i);
-            data[i][0] = String.valueOf(component.getId());
-            data[i][1] = component.getBrand();
-            data[i][2] = component.getModel();
-            data[i][3] = component.getSerialNumber();
-            data[i][4] = String.valueOf(component.getPrice());
-            data[i][5] = String.valueOf(component.getQuantity());
-            data[i][6] = component.getClass().getSimpleName();
-        }
-        tableComponents.setModel(new javax.swing.table.DefaultTableModel(data, columnNames));
-    }
-
-    private void updateCustomerTable() {
-        String[] columnNames = {"ID", "First Name", "Last Name", "Address"};
-        List<Customer> customers = storeManager.getCustomers();
-        String[][] data = new String[customers.size()][4];
-        for (int i = 0; i < customers.size(); i++) {
-            Customer customer = customers.get(i);
-            data[i][0] = String.valueOf(customer.getId());
-            data[i][1] = customer.getFirstName();
-            data[i][2] = customer.getLastName();
-            data[i][3] = customer.getAddress();
-        }
-        tableCustomers.setModel(new javax.swing.table.DefaultTableModel(data, columnNames));
+    private JButton createStyledButton(String text) {
+        JButton button = new JButton(text);
+        button.setFont(new Font("Arial", Font.BOLD, 16));
+        button.setBackground(new Color(70, 130, 180));
+        button.setForeground(Color.WHITE);
+        button.setFocusPainted(false);
+        return button;
     }
 
     public static void main(String[] args) {
@@ -370,5 +678,59 @@ public class MainFrame extends JFrame {
                 }
             }
         });
+    }
+}
+
+class User {
+    private String username;
+    private String password;
+    private String role;
+
+    public User(String username, String password, String role) {
+        this.username = username;
+        this.password = password;
+        this.role = role;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public String getRole() {
+        return role;
+    }
+}
+
+class Sale {
+    private Customer customer;
+    private logico.Component component;
+    private int quantity;
+    private double totalPrice;
+
+    public Sale(Customer customer, logico.Component component, int quantity, double totalPrice) {
+        this.customer = customer;
+        this.component = component;
+        this.quantity = quantity;
+        this.totalPrice = totalPrice;
+    }
+
+    public Customer getCustomer() {
+        return customer;
+    }
+
+    public logico.Component getComponent() {
+        return component;
+    }
+
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public double getTotalPrice() {
+        return totalPrice;
     }
 }
