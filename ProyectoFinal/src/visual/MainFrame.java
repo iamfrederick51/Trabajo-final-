@@ -1,11 +1,13 @@
 package visual;
 
+import logico.Customer;
+import logico.Component;
+import logico.Sale;
+import logico.StoreManager;
+import logico.User;
+
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-
-import logico.Customer;
-import logico.StoreManager;
-
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -619,7 +621,6 @@ public class MainFrame extends JFrame {
         saleFrame.setVisible(true);
     }
 
-
     private void updateSale() {
         // Implementar lógica para actualizar una venta existente
     }
@@ -678,59 +679,5 @@ public class MainFrame extends JFrame {
                 }
             }
         });
-    }
-}
-
-class User {
-    private String username;
-    private String password;
-    private String role;
-
-    public User(String username, String password, String role) {
-        this.username = username;
-        this.password = password;
-        this.role = role;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public String getRole() {
-        return role;
-    }
-}
-
-class Sale {
-    private Customer customer;
-    private logico.Component component;
-    private int quantity;
-    private double totalPrice;
-
-    public Sale(Customer customer, logico.Component component, int quantity, double totalPrice) {
-        this.customer = customer;
-        this.component = component;
-        this.quantity = quantity;
-        this.totalPrice = totalPrice;
-    }
-
-    public Customer getCustomer() {
-        return customer;
-    }
-
-    public logico.Component getComponent() {
-        return component;
-    }
-
-    public int getQuantity() {
-        return quantity;
-    }
-
-    public double getTotalPrice() {
-        return totalPrice;
     }
 }
