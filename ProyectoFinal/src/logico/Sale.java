@@ -13,7 +13,6 @@ public class Sale {
         this.totalPrice = totalPrice;
     }
 
-    // Getters y setters
     public Customer getCustomer() {
         return customer;
     }
