@@ -4,67 +4,37 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class StoreManager {
-    private List<Component> components;
+    private List<Sale> sales;
     private List<Customer> customers;
+    private List<Component> components;
 
     public StoreManager() {
-        this.components = new ArrayList<>();
-        this.customers = new ArrayList<>();
+        sales = new ArrayList<>();
+        customers = new ArrayList<>();
+        components = new ArrayList<>();
     }
 
-    public void addComponent(Component component) {
-        this.components.add(component);
+    public void addSale(Sale sale) {
+        sales.add(sale);
     }
 
-    public List<Component> getComponents() {
-        return components;
-    }
-
-    public List<Component> getComponentsByType(Class<? extends Component> componentType) {
-        List<Component> result = new ArrayList<>();
-        for (Component component : components) {
-            if (componentType.isInstance(component)) {
-                result.add(component);
-            }
-        }
-        return result;
-    }
-
-    public void removeComponent(int id) {
-        components.removeIf(component -> component.getId() == id);
-    }
-
-    public void updateComponent(Component updatedComponent) {
-        for (int i = 0; i < components.size(); i++) {
-            if (components.get(i).getId() == updatedComponent.getId()) {
-                components.set(i, updatedComponent);
-                break;
-            }
-        }
+    public List<Sale> getSales() {
+        return sales;
     }
 
     public void addCustomer(Customer customer) {
-        this.customers.add(customer);
+        customers.add(customer);
     }
 
     public List<Customer> getCustomers() {
         return customers;
     }
 
-    public void updateCustomer(Customer updatedCustomer) {
-        for (int i = 0; i < customers.size(); i++) {
-            if (customers.get(i).getId() == updatedCustomer.getId()) {
-                customers.set(i, updatedCustomer);
-                break;
-            }
-        }
+    public void addComponent(Component component) {
+        components.add(component);
     }
 
-    public void removeCustomer(int id) {
-        customers.removeIf(customer -> customer.getId() == id);
+    public List<Component> getComponents() {
+        return components;
     }
 }
-
-
-
-
