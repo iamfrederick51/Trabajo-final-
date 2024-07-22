@@ -1,6 +1,7 @@
 package logico;
 
 public abstract class Component {
+    private int id;
     private String brand;
     private String model;
     private String serialNumber;
@@ -15,7 +16,14 @@ public abstract class Component {
         this.quantity = quantity;
     }
 
-    // Métodos getter y setter
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
     public String getBrand() {
         return brand;
     }
@@ -34,5 +42,9 @@ public abstract class Component {
 
     public int getQuantity() {
         return quantity;
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
     }
 }
