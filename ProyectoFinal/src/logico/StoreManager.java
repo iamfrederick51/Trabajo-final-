@@ -1,5 +1,10 @@
 package logico;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -53,4 +58,25 @@ public class StoreManager {
     public List<Sale> getSales() {
         return sales;
     }
+    public void removeSale(Sale sale) {
+        sales.remove(sale);
+    }
+//Método para guardar clientes en un archivo
+public void saveCustomers(String filename) {
+    try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(filename))) {
+        oos.writeObject(customers);
+        oos.flush();
+    } catch (IOException e) {
+        e.printStackTrace();
+    }
+}
+
+// Método para cargar clientes desde un archivo
+public void loadCustomers(String filename) {
+    try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(filename))) {
+        customers = (List<Customer>) ois.readObject();
+    } catch (IOException | ClassNotFoundException e) {
+        e.printStackTrace();
+    }
+}
 }

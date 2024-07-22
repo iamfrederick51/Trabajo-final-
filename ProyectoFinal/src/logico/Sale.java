@@ -28,4 +28,20 @@ public class Sale {
     public double getTotalPrice() {
         return totalPrice;
     }
+
+	public void setCustomer(Customer customer) {
+		this.customer = customer;
+	}
+
+	public void setComponent(Component component) {
+		this.component = component;
+	}
+
+	public void setQuantity(int quantity) {
+		this.quantity = quantity;
+	}
+
+	public void setTotalPrice(double totalPrice) {
+		this.totalPrice = totalPrice;
+	}
 }

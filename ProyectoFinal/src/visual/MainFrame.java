@@ -511,6 +511,20 @@ public class MainFrame extends JFrame {
         gbc.gridx = 2;
         panel.add(btnDeleteCustomer, gbc);
 
+        // Añadir botón "Guardar Clientes"
+        JButton btnSaveCustomers = createStyledButton("Guardar Clientes");
+        btnSaveCustomers.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                storeManager.saveCustomers("clientes.dat");
+                JOptionPane.showMessageDialog(panel, "Clientes guardados exitosamente.");
+            }
+        });
+        gbc.gridx = 0;
+        gbc.gridy = 7;
+        gbc.gridwidth = 2;
+        panel.add(btnSaveCustomers, gbc);
+
         return panel;
     }
 
@@ -622,11 +636,109 @@ public class MainFrame extends JFrame {
     }
 
     private void updateSale() {
-        // Implementar lógica para actualizar una venta existente
+        JFrame updateFrame = new JFrame("Actualizar Venta");
+        updateFrame.setSize(400, 300);
+        updateFrame.setLocationRelativeTo(null);
+
+        JPanel updatePanel = new JPanel(new GridLayout(6, 2, 10, 10));
+        updatePanel.setBorder(new EmptyBorder(10, 10, 10, 10));
+
+        JLabel lblSelectSale = new JLabel("Seleccione Venta:");
+        JComboBox<Sale> saleComboBox = new JComboBox<>(storeManager.getSales().toArray(new Sale[0]));
+        updatePanel.add(lblSelectSale);
+        updatePanel.add(saleComboBox);
+
+        JLabel lblCustomer = new JLabel("Cliente:");
+        JComboBox<Customer> customerComboBox = new JComboBox<>(storeManager.getCustomers().toArray(new Customer[0]));
+        updatePanel.add(lblCustomer);
+        updatePanel.add(customerComboBox);
+
+        JLabel lblComponent = new JLabel("Componente:");
+        JComboBox<Component> componentComboBox = new JComboBox<>(storeManager.getComponents().toArray(new Component[0]));
+        updatePanel.add(lblComponent);
+        updatePanel.add(componentComboBox);
+
+        JLabel lblQuantity = new JLabel("Cantidad:");
+        JTextField txtQuantity = new JTextField();
+        updatePanel.add(lblQuantity);
+        updatePanel.add(txtQuantity);
+
+        JLabel lblPrice = new JLabel("Precio Total:");
+        JTextField txtPrice = new JTextField();
+        txtPrice.setEditable(false);
+        updatePanel.add(lblPrice);
+        updatePanel.add(txtPrice);
+
+        JButton btnCalculate = createStyledButton("Calcular Precio");
+        btnCalculate.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Component selectedComponent = (Component) componentComboBox.getSelectedItem();
+                int quantity = Integer.parseInt(txtQuantity.getText());
+                if (selectedComponent != null) {
+                    double totalPrice = selectedComponent.getPrice() * quantity;
+                    txtPrice.setText(String.valueOf(totalPrice));
+                }
+            }
+        });
+        updatePanel.add(btnCalculate);
+
+        JButton btnUpdateSale = createStyledButton("Actualizar Venta");
+        btnUpdateSale.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Sale selectedSale = (Sale) saleComboBox.getSelectedItem();
+                Customer selectedCustomer = (Customer) customerComboBox.getSelectedItem();
+                Component selectedComponent = (Component) componentComboBox.getSelectedItem();
+                int quantity = Integer.parseInt(txtQuantity.getText());
+                double totalPrice = Double.parseDouble(txtPrice.getText());
+
+                if (selectedSale != null && selectedCustomer != null && selectedComponent != null) {
+                    selectedSale.setCustomer(selectedCustomer);
+                    selectedSale.setComponent(selectedComponent);
+                    selectedSale.setQuantity(quantity);
+                    selectedSale.setTotalPrice(totalPrice);
+                    JOptionPane.showMessageDialog(updateFrame, "Venta actualizada con éxito.");
+                    updateFrame.dispose();
+                }
+            }
+        });
+        updatePanel.add(btnUpdateSale);
+
+        updateFrame.add(updatePanel);
+        updateFrame.setVisible(true);
     }
 
     private void deleteSale() {
-        // Implementar lógica para eliminar una venta
+        JFrame deleteFrame = new JFrame("Eliminar Venta");
+        deleteFrame.setSize(400, 150);
+        deleteFrame.setLocationRelativeTo(null);
+
+        JPanel deletePanel = new JPanel(new GridLayout(2, 2, 10, 10));
+        deletePanel.setBorder(new EmptyBorder(10, 10, 10, 10));
+
+        JLabel lblSelectSale = new JLabel("Seleccione Venta:");
+        JComboBox<Sale> saleComboBox = new JComboBox<>(storeManager.getSales().toArray(new Sale[0]));
+        deletePanel.add(lblSelectSale);
+        deletePanel.add(saleComboBox);
+
+        JButton btnDeleteSale = createStyledButton("Eliminar Venta");
+        btnDeleteSale.setBackground(new Color(255, 99, 71));
+        btnDeleteSale.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Sale selectedSale = (Sale) saleComboBox.getSelectedItem();
+                if (selectedSale != null) {
+                    storeManager.removeSale(selectedSale);
+                    JOptionPane.showMessageDialog(deleteFrame, "Venta eliminada con éxito.");
+                    deleteFrame.dispose();
+                }
+            }
+        });
+        deletePanel.add(btnDeleteSale);
+
+        deleteFrame.add(deletePanel);
+        deleteFrame.setVisible(true);
     }
 
     private JPanel createUserPanel() {
