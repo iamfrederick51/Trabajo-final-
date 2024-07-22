@@ -12,7 +12,6 @@ public class Customer {
         this.address = address;
     }
 
-    // Getters y setters
     public int getId() {
         return id;
     }
