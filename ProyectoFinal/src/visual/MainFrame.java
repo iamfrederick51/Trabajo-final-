@@ -1,6 +1,10 @@
 package visual;
 
 import logico.Customer;
+import logico.HardDrive;
+import logico.Microprocessor;
+import logico.MotherBoard;
+import logico.Ram;
 import logico.Component;
 import logico.Sale;
 import logico.StoreManager;
@@ -8,6 +12,8 @@ import logico.User;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableModel;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -298,135 +304,343 @@ public class MainFrame extends JFrame {
         return adminPanel;
     }
 
-    private JPanel createComponentManagementPanel() {
-        JPanel panel = new JPanel(new GridBagLayout());
-        GridBagConstraints gbc = new GridBagConstraints();
+	private JPanel createComponentManagementPanel() {
+	    JPanel panel = new JPanel(new GridBagLayout());
+	    GridBagConstraints gbc = new GridBagConstraints();
+	
+	    JLabel titleLabel = new JLabel("Gestión de Componentes");
+	    titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
+	    gbc.gridx = 0;
+	    gbc.gridy = 0;
+	    gbc.gridwidth = 4;
+	    gbc.insets = new Insets(10, 10, 10, 10);
+	    gbc.anchor = GridBagConstraints.WEST;
+	    panel.add(titleLabel, gbc);
+	
+	    gbc.anchor = GridBagConstraints.CENTER;
+	    gbc.gridwidth = 1;
+	    gbc.insets = new Insets(5, 5, 5, 5);
+	
+	    JLabel lblBrand = new JLabel("Marca:");
+	    lblBrand.setFont(new Font("Arial", Font.PLAIN, 18));
+	    gbc.gridx = 0;
+	    gbc.gridy = 1;
+	    gbc.anchor = GridBagConstraints.EAST;
+	    panel.add(lblBrand, gbc);
+	
+	    JTextField txtBrand = new JTextField(15);
+	    txtBrand.setFont(new Font("Arial", Font.PLAIN, 16));
+	    gbc.gridx = 1;
+	    gbc.anchor = GridBagConstraints.WEST;
+	    panel.add(txtBrand, gbc);
+	
+	    JLabel lblModel = new JLabel("Modelo:");
+	    lblModel.setFont(new Font("Arial", Font.PLAIN, 18));
+	    gbc.gridx = 0;
+	    gbc.gridy = 2;
+	    gbc.anchor = GridBagConstraints.EAST;
+	    panel.add(lblModel, gbc);
+	
+	    JTextField txtModel = new JTextField(15);
+	    txtModel.setFont(new Font("Arial", Font.PLAIN, 16));
+	    gbc.gridx = 1;
+	    gbc.anchor = GridBagConstraints.WEST;
+	    panel.add(txtModel, gbc);
+	
+	    JLabel lblSerialNumber = new JLabel("Número de Serie:");
+	    lblSerialNumber.setFont(new Font("Arial", Font.PLAIN, 18));
+	    gbc.gridx = 0;
+	    gbc.gridy = 3;
+	    gbc.anchor = GridBagConstraints.EAST;
+	    panel.add(lblSerialNumber, gbc);
+	
+	    JTextField txtSerialNumber = new JTextField(15);
+	    txtSerialNumber.setFont(new Font("Arial", Font.PLAIN, 16));
+	    gbc.gridx = 1;
+	    gbc.anchor = GridBagConstraints.WEST;
+	    panel.add(txtSerialNumber, gbc);
+	
+	    JLabel lblPrice = new JLabel("Precio:");
+	    lblPrice.setFont(new Font("Arial", Font.PLAIN, 18));
+	    gbc.gridx = 0;
+	    gbc.gridy = 4;
+	    gbc.anchor = GridBagConstraints.EAST;
+	    panel.add(lblPrice, gbc);
+	
+	    JTextField txtPrice = new JTextField(15);
+	    txtPrice.setFont(new Font("Arial", Font.PLAIN, 16));
+	    gbc.gridx = 1;
+	    gbc.anchor = GridBagConstraints.WEST;
+	    panel.add(txtPrice, gbc);
+	
+	    JLabel lblQuantity = new JLabel("Cantidad:");
+	    lblQuantity.setFont(new Font("Arial", Font.PLAIN, 18));
+	    gbc.gridx = 0;
+	    gbc.gridy = 5;
+	    gbc.anchor = GridBagConstraints.EAST;
+	    panel.add(lblQuantity, gbc);
+	
+	    JTextField txtQuantity = new JTextField(15);
+	    txtQuantity.setFont(new Font("Arial", Font.PLAIN, 16));
+	    gbc.gridx = 1;
+	    gbc.anchor = GridBagConstraints.WEST;
+	    panel.add(txtQuantity, gbc);
+	
+	    JLabel lblSocketType = new JLabel("Tipo de Socket:");
+	    lblSocketType.setFont(new Font("Arial", Font.PLAIN, 18));
+	    gbc.gridx = 0;
+	    gbc.gridy = 6;
+	    gbc.anchor = GridBagConstraints.EAST;
+	    panel.add(lblSocketType, gbc);
+	
+	    JTextField txtSocketType = new JTextField(15);
+	    txtSocketType.setFont(new Font("Arial", Font.PLAIN, 16));
+	    gbc.gridx = 1;
+	    gbc.anchor = GridBagConstraints.WEST;
+	    panel.add(txtSocketType, gbc);
+	
+	    JLabel lblRamType = new JLabel("Tipo de RAM:");
+	    lblRamType.setFont(new Font("Arial", Font.PLAIN, 18));
+	    gbc.gridx = 0;
+	    gbc.gridy = 7;
+	    gbc.anchor = GridBagConstraints.EAST;
+	    panel.add(lblRamType, gbc);
+	
+	    JTextField txtRamType = new JTextField(15);
+	    txtRamType.setFont(new Font("Arial", Font.PLAIN, 16));
+	    gbc.gridx = 1;
+	    gbc.anchor = GridBagConstraints.WEST;
+	    panel.add(txtRamType, gbc);
+	
+	    JLabel lblConnections = new JLabel("Conexiones:");
+	    lblConnections.setFont(new Font("Arial", Font.PLAIN, 18));
+	    gbc.gridx = 0;
+	    gbc.gridy = 8;
+	    gbc.anchor = GridBagConstraints.EAST;
+	    panel.add(lblConnections, gbc);
+	
+	    JTextField txtConnections = new JTextField(15);
+	    txtConnections.setFont(new Font("Arial", Font.PLAIN, 16));
+	    gbc.gridx = 1;
+	    gbc.anchor = GridBagConstraints.WEST;
+	    panel.add(txtConnections, gbc);
+	
+	    JLabel lblComponentType = new JLabel("Tipo de Componente:");
+	    lblComponentType.setFont(new Font("Arial", Font.PLAIN, 18));
+	    gbc.gridx = 0;
+	    gbc.gridy = 9;
+	    gbc.anchor = GridBagConstraints.EAST;
+	    panel.add(lblComponentType, gbc);
+	
+	    JComboBox<String> comboBoxComponentType = new JComboBox<>(new String[]{"MotherBoard", "Microprocessor", "Ram", "HardDrive"});
+	    comboBoxComponentType.setFont(new Font("Arial", Font.PLAIN, 16));
+	    gbc.gridx = 1;
+	    gbc.anchor = GridBagConstraints.WEST;
+	    panel.add(comboBoxComponentType, gbc);
+	
+	    DefaultTableModel tableModel = new DefaultTableModel(new Object[]{"ID", "Marca", "Modelo", "Número de Serie", "Precio", "Cantidad", "Tipo"}, 0);
+	    JTable table = new JTable(tableModel);
+	    JScrollPane scrollPane = new JScrollPane(table);
+	    gbc.gridx = 0;
+	    gbc.gridy = 10;
+	    gbc.gridwidth = 3;
+	    gbc.fill = GridBagConstraints.BOTH;
+	    gbc.weightx = 1.0;
+	    gbc.weighty = 1.0;
+	    panel.add(scrollPane, gbc);
+	
+	    JButton btnAddComponent = createStyledButton("Agregar Componente");
+	    gbc.gridx = 0;
+	    gbc.gridy = 11;
+	    gbc.gridwidth = 1;
+	    gbc.fill = GridBagConstraints.NONE;
+	    gbc.weightx = 0;
+	    gbc.weighty = 0;
+	    gbc.anchor = GridBagConstraints.CENTER;
+	    panel.add(btnAddComponent, gbc);
+	
+	    JButton btnUpdateComponent = createStyledButton("Actualizar Componente");
+	    gbc.gridx = 1;
+	    panel.add(btnUpdateComponent, gbc);
+	
+	    JButton btnDeleteComponent = createStyledButton("Eliminar Componente");
+	    btnDeleteComponent.setBackground(new Color(255, 99, 71));
+	    gbc.gridx = 2;
+	    panel.add(btnDeleteComponent, gbc);
+	    
+	    
+        JButton btnCancel = createStyledButton("Cancelar");
+        gbc.gridx = 3;
+        panel.add(btnCancel, gbc);
+        
+        
+        btnCancel.addActionListener(new ActionListener() {
+	        @Override
+	        public void actionPerformed(ActionEvent e) {
+	            txtBrand.setText("");
+	            txtModel.setText("");
+	            txtSerialNumber.setText("");
+	            txtPrice.setText("");
+	            txtQuantity.setText("");
+	            txtSocketType.setText("");
+	            txtRamType.setText("");
+	            txtConnections.setText("");
+	            comboBoxComponentType.setSelectedIndex(0);
+	        }});
+        
+        
+    	
+	
+	    // Cargar datos al inicio
+	    storeManager.loadComponents();
+	    updateTable(tableModel);
+	
+	    // Acción para agregar componente
+	    btnAddComponent.addActionListener(new ActionListener() {
+	        @Override
+	        public void actionPerformed(ActionEvent e) {
+	            try {
+	                String brand = txtBrand.getText();
+	                String model = txtModel.getText();
+	                String serialNumber = txtSerialNumber.getText();
+	                double price = Double.parseDouble(txtPrice.getText());
+	                int quantity = Integer.parseInt(txtQuantity.getText());
+	                String type = (String) comboBoxComponentType.getSelectedItem();
+	
+	                Component component = null;
+	                switch (type) {
+	                    case "MotherBoard":
+	                        String socketType = txtSocketType.getText();
+	                        String ramType = txtRamType.getText();
+	                        String[] connections = txtConnections.getText().split(",");
+	                        component = new MotherBoard(brand, model, serialNumber, price, quantity, socketType, ramType, connections);
+	                        break;
+	                    case "Microprocessor":
+	                        socketType = txtSocketType.getText();
+	                        double speed = Double.parseDouble(txtConnections.getText()); // Aquí se usa txtConnections para la velocidad
+	                        component = new Microprocessor(brand, model, serialNumber, price, quantity, socketType, speed);
+	                        break;
+	                    case "Ram":
+	                        int size = Integer.parseInt(txtRamType.getText()); // Aquí se usa txtRamType para el tamaño
+	                        String ramTypeText = txtConnections.getText(); // Aquí se usa txtConnections para el tipo de RAM
+	                        component = new Ram(brand, model, serialNumber, price, quantity, size, ramTypeText);
+	                        break;
+	                    case "HardDrive":
+	                        int capacity = Integer.parseInt(txtSocketType.getText()); // Aquí se usa txtSocketType para la capacidad
+	                        String connectionType = txtConnections.getText(); // Aquí se usa txtConnections para el tipo de conexión
+	                        component = new HardDrive(brand, model, serialNumber, price, quantity, capacity, connectionType);
+	                        break;
+	                }
+	
+	                if (component != null) {
+	                    storeManager.addComponent(component);
+	                    updateTable(tableModel);
+	                    JOptionPane.showMessageDialog(panel, "Componente guardado exitosamente.");
+	    	            txtBrand.setText("");
+	    	            txtModel.setText("");
+	    	            txtSerialNumber.setText("");
+	    	            txtPrice.setText("");
+	    	            txtQuantity.setText("");
+	    	            txtSocketType.setText("");
+	    	            txtRamType.setText("");
+	    	            txtConnections.setText("");
+	    	            comboBoxComponentType.setSelectedIndex(0);
+	                }
+	            } catch (NumberFormatException ex) {
+	                JOptionPane.showMessageDialog(panel, "Error en la entrada de datos: " + ex.getMessage());
+	            }
+	        }
+	    });
+	
+	    // Acción para actualizar componente
+	    btnUpdateComponent.addActionListener(new ActionListener() {
+	        @Override
+	        public void actionPerformed(ActionEvent e) {
+	            int selectedRow = table.getSelectedRow();
+	            if (selectedRow >= 0) {
+	                try {
+	                    int id = (int) tableModel.getValueAt(selectedRow, 0);
+	                    String brand = txtBrand.getText();
+	                    String model = txtModel.getText();
+	                    String serialNumber = txtSerialNumber.getText();
+	                    double price = Double.parseDouble(txtPrice.getText());
+	                    int quantity = Integer.parseInt(txtQuantity.getText());
+	                    String type = (String) comboBoxComponentType.getSelectedItem();
+	
+	                    Component component = null;
+	                    switch (type) {
+	                        case "MotherBoard":
+	                            String socketType = txtSocketType.getText();
+	                            String ramType = txtRamType.getText();
+	                            String[] connections = txtConnections.getText().split(",");
+	                            component = new MotherBoard(brand, model, serialNumber, price, quantity, socketType, ramType, connections);
+	                            break;
+	                        case "Microprocessor":
+	                            socketType = txtSocketType.getText();
+	                            double speed = Double.parseDouble(txtConnections.getText());
+	                            component = new Microprocessor(brand, model, serialNumber, price, quantity, socketType, speed);
+	                            break;
+	                        case "Ram":
+	                            int size = Integer.parseInt(txtRamType.getText());
+	                            String ramTypeText = txtConnections.getText();
+	                            component = new Ram(brand, model, serialNumber, price, quantity, size, ramTypeText);
+	                            break;
+	                        case "HardDrive":
+	                            int capacity = Integer.parseInt(txtSocketType.getText());
+	                            String connectionType = txtConnections.getText();
+	                            component = new HardDrive(brand, model, serialNumber, price, quantity, capacity, connectionType);
+	                            break;
+	                    }
+	
+	                    if (component != null) {
+	                        component.setId(id);
+	                        storeManager.updateComponent(component);
+	                        updateTable(tableModel);
+	                        JOptionPane.showMessageDialog(panel, "Componente actualizado exitosamente.");
+	                    }
+	                } catch (NumberFormatException ex) {
+	                    JOptionPane.showMessageDialog(panel, "Error en la entrada de datos: " + ex.getMessage());
+	                }
+	            }
+	        }
+	    });
+	
+	    // Acción para eliminar componente
+	    btnDeleteComponent.addActionListener(new ActionListener() {
+	        @Override
+	        public void actionPerformed(ActionEvent e) {
+	            int selectedRow = table.getSelectedRow();
+	            if (selectedRow >= 0) {
+	                int id = (int) tableModel.getValueAt(selectedRow, 0);
+	                storeManager.removeComponent(id);
+	                updateTable(tableModel);
+	                JOptionPane.showMessageDialog(panel, "Componente eliminado exitosamente.");
+	            }
+	        }
+	    });
+	
+	    return panel;
+	}
 
-        JLabel titleLabel = new JLabel("Gestión de Componentes");
-        titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.gridwidth = 2;
-        gbc.insets = new Insets(10, 10, 10, 10);
-        panel.add(titleLabel, gbc);
-
-        JLabel lblBrand = new JLabel("Marca:");
-        lblBrand.setFont(new Font("Arial", Font.PLAIN, 18));
-        gbc.gridx = 0;
-        gbc.gridy = 1;
-        gbc.gridwidth = 1;
-        panel.add(lblBrand, gbc);
-
-        JTextField txtBrand = new JTextField(15);
-        txtBrand.setFont(new Font("Arial", Font.PLAIN, 16));
-        gbc.gridx = 1;
-        panel.add(txtBrand, gbc);
-
-        JLabel lblModel = new JLabel("Modelo:");
-        lblModel.setFont(new Font("Arial", Font.PLAIN, 18));
-        gbc.gridx = 0;
-        gbc.gridy = 2;
-        panel.add(lblModel, gbc);
-
-        JTextField txtModel = new JTextField(15);
-        txtModel.setFont(new Font("Arial", Font.PLAIN, 16));
-        gbc.gridx = 1;
-        panel.add(txtModel, gbc);
-
-        JLabel lblSerialNumber = new JLabel("Número de Serie:");
-        lblSerialNumber.setFont(new Font("Arial", Font.PLAIN, 18));
-        gbc.gridx = 0;
-        gbc.gridy = 3;
-        panel.add(lblSerialNumber, gbc);
-
-        JTextField txtSerialNumber = new JTextField(15);
-        txtSerialNumber.setFont(new Font("Arial", Font.PLAIN, 16));
-        gbc.gridx = 1;
-        panel.add(txtSerialNumber, gbc);
-
-        JLabel lblPrice = new JLabel("Precio:");
-        lblPrice.setFont(new Font("Arial", Font.PLAIN, 18));
-        gbc.gridx = 0;
-        gbc.gridy = 4;
-        panel.add(lblPrice, gbc);
-
-        JTextField txtPrice = new JTextField(15);
-        txtPrice.setFont(new Font("Arial", Font.PLAIN, 16));
-        gbc.gridx = 1;
-        panel.add(txtPrice, gbc);
-
-        JLabel lblQuantity = new JLabel("Cantidad:");
-        lblQuantity.setFont(new Font("Arial", Font.PLAIN, 18));
-        gbc.gridx = 0;
-        gbc.gridy = 5;
-        panel.add(lblQuantity, gbc);
-
-        JTextField txtQuantity = new JTextField(15);
-        txtQuantity.setFont(new Font("Arial", Font.PLAIN, 16));
-        gbc.gridx = 1;
-        panel.add(txtQuantity, gbc);
-
-        JLabel lblSocketType = new JLabel("Tipo de Socket:");
-        lblSocketType.setFont(new Font("Arial", Font.PLAIN, 18));
-        gbc.gridx = 0;
-        gbc.gridy = 6;
-        panel.add(lblSocketType, gbc);
-
-        JTextField txtSocketType = new JTextField(15);
-        txtSocketType.setFont(new Font("Arial", Font.PLAIN, 16));
-        gbc.gridx = 1;
-        panel.add(txtSocketType, gbc);
-
-        JLabel lblRamType = new JLabel("Tipo de RAM:");
-        lblRamType.setFont(new Font("Arial", Font.PLAIN, 18));
-        gbc.gridx = 0;
-        gbc.gridy = 7;
-        panel.add(lblRamType, gbc);
-
-        JTextField txtRamType = new JTextField(15);
-        txtRamType.setFont(new Font("Arial", Font.PLAIN, 16));
-        gbc.gridx = 1;
-        panel.add(txtRamType, gbc);
-
-        JLabel lblConnections = new JLabel("Conexiones:");
-        lblConnections.setFont(new Font("Arial", Font.PLAIN, 18));
-        gbc.gridx = 0;
-        gbc.gridy = 8;
-        panel.add(lblConnections, gbc);
-
-        JTextField txtConnections = new JTextField(15);
-        txtConnections.setFont(new Font("Arial", Font.PLAIN, 16));
-        gbc.gridx = 1;
-        panel.add(txtConnections, gbc);
-
-        JLabel lblComponentType = new JLabel("Tipo de Componente:");
-        lblComponentType.setFont(new Font("Arial", Font.PLAIN, 18));
-        gbc.gridx = 0;
-        gbc.gridy = 9;
-        panel.add(lblComponentType, gbc);
-
-        JComboBox<String> comboBoxComponentType = new JComboBox<>(new String[]{"MotherBoard", "Microprocessor", "Ram", "HardDrive"});
-        comboBoxComponentType.setFont(new Font("Arial", Font.PLAIN, 16));
-        gbc.gridx = 1;
-        panel.add(comboBoxComponentType, gbc);
-
-        JButton btnAddComponent = createStyledButton("Agregar Componente");
-        gbc.gridx = 0;
-        gbc.gridy = 10;
-        gbc.gridwidth = 1;
-        panel.add(btnAddComponent, gbc);
-
-        JButton btnUpdateComponent = createStyledButton("Actualizar Componente");
-        gbc.gridx = 1;
-        panel.add(btnUpdateComponent, gbc);
-
-        JButton btnDeleteComponent = createStyledButton("Eliminar Componente");
-        btnDeleteComponent.setBackground(new Color(255, 99, 71));
-        gbc.gridx = 2;
-        panel.add(btnDeleteComponent, gbc);
-
-        return panel;
+    // Método para actualizar la tabla
+    private void updateTable(DefaultTableModel tableModel) {
+        tableModel.setRowCount(0); // Limpiar la tabla
+        for (Component component : storeManager.getComponents()) {
+            tableModel.addRow(new Object[]{
+                component.getId(),
+                component.getBrand(),
+                component.getModel(),
+                component.getSerialNumber(),
+                component.getPrice(),
+                component.getQuantity(),
+                component.getClass().getSimpleName() // O el tipo del componente según corresponda
+            });
+        }
     }
+    
+
+
+
 
     private JPanel createCustomerManagementPanel() {
         JPanel panel = new JPanel(new GridBagLayout());

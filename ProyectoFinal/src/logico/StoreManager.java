@@ -30,6 +30,23 @@ public class StoreManager {
     public void removeComponent(int id) {
         components.removeIf(component -> component.getId() == id);
     }
+    
+    public void saveComponents() {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("component.dat"))) {
+            oos.writeObject(components);
+            oos.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void loadComponents() {
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream("component.dat"))) {
+            components = (List<Component>) ois.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
 
     public List<Component> getComponents() {
         return components;
