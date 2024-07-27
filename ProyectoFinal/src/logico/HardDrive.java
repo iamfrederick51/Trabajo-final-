@@ -1,6 +1,7 @@
 package logico;
 
 public class HardDrive extends Component {
+    private static final long serialVersionUID = 1L;
     private int capacity;
     private String connectionType;
 
@@ -10,22 +11,11 @@ public class HardDrive extends Component {
         this.connectionType = connectionType;
     }
 
-    // Getters y setters...
     public int getCapacity() {
         return capacity;
-    }
-
-    public void setCapacity(int capacity) {
-        this.capacity = capacity;
     }
 
     public String getConnectionType() {
         return connectionType;
     }
-
-    public void setConnectionType(String connectionType) {
-        this.connectionType = connectionType;
-    }
 }
-
-
