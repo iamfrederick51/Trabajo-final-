@@ -1,6 +1,7 @@
 package logico;
 
 public class MotherBoard extends Component {
+    private static final long serialVersionUID = 1L;
     private String socketType;
     private String ramType;
     private String[] connections;
@@ -12,7 +13,6 @@ public class MotherBoard extends Component {
         this.connections = connections;
     }
 
-    // Métodos getter y setter específicos de MotherBoard
     public String getSocketType() {
         return socketType;
     }
