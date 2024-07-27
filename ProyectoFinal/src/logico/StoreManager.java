@@ -57,6 +57,16 @@ public class StoreManager {
         throw new IllegalArgumentException("Componente no encontrado.");
     }
 
+    public void returnComponent(int id, int quantity) {
+        for (Component component : components) {
+            if (component.getId() == id) {
+                component.setQuantity(component.getQuantity() + quantity);
+                return;
+            }
+        }
+        throw new IllegalArgumentException("Componente no encontrado.");
+    }
+
     public void saveComponents() {
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("component.dat"))) {
             oos.writeObject(components);
@@ -132,6 +142,24 @@ public class StoreManager {
             customers = (List<Customer>) ois.readObject();
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
+        }
+    }
+
+    public Component getComponentById(int componentId) {
+        for (Component component : components) {
+            if (component.getId() == componentId) {
+                return component;
+            }
+        }
+        return null;
+    }
+
+    public void addReviewToComponent(int componentId, Review review) {
+        Component component = getComponentById(componentId);
+        if (component != null) {
+            component.addReview(review);
+        } else {
+            throw new IllegalArgumentException("Componente no encontrado.");
         }
     }
 }

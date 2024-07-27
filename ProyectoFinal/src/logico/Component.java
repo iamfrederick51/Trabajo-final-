@@ -1,6 +1,8 @@
 package logico;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class Component implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -10,6 +12,7 @@ public abstract class Component implements Serializable {
     private String serialNumber;
     private double price;
     private int quantity;
+    private List<Review> reviews;
 
     public Component(String brand, String model, String serialNumber, double price, int quantity) {
         this.brand = brand;
@@ -17,6 +20,7 @@ public abstract class Component implements Serializable {
         this.serialNumber = serialNumber;
         this.price = price;
         this.quantity = quantity;
+        this.reviews = new ArrayList<>();
     }
 
     public int getId() {
@@ -49,5 +53,13 @@ public abstract class Component implements Serializable {
 
     public void setQuantity(int quantity) {
         this.quantity = quantity;
+    }
+
+    public void addReview(Review review) {
+        reviews.add(review);
+    }
+
+    public List<Review> getReviews() {
+        return reviews;
     }
 }

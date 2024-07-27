@@ -1,6 +1,7 @@
 package visual;
 
 import logico.*;
+import logico.Component;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -662,11 +663,18 @@ public class MainFrame extends JFrame {
         gbc.gridwidth = 1;
         panel.add(btnSaveCustomers, gbc);
 
+        JButton btnReceiptHistory = createStyledButton("Historial de Recibos");
+        gbc.gridx = 0;
+        gbc.gridy = 8;
+        gbc.gridwidth = 2;
+        gbc.anchor = GridBagConstraints.CENTER;
+        panel.add(btnReceiptHistory, gbc);
+
         DefaultTableModel tableModel = new DefaultTableModel(new Object[]{"ID", "Nombre", "Apellido", "Dirección", "Email", "Teléfono"}, 0);
         JTable table = new JTable(tableModel);
         JScrollPane scrollPane = new JScrollPane(table);
         gbc.gridx = 0;
-        gbc.gridy = 8;
+        gbc.gridy = 9;
         gbc.gridwidth = 2;
         gbc.fill = GridBagConstraints.BOTH;
         gbc.weightx = 1.0;
@@ -738,6 +746,68 @@ public class MainFrame extends JFrame {
             }
         });
 
+        // Acción para mostrar historial de recibos
+        btnReceiptHistory.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int selectedRow = table.getSelectedRow();
+                if (selectedRow >= 0) {
+                    int id = (int) tableModel.getValueAt(selectedRow, 0);
+                    showReceiptHistory(id);
+                } else {
+                    JOptionPane.showMessageDialog(panel, "Seleccione un cliente para ver el historial de recibos.");
+                }
+            }
+        });
+
+        // Barra de búsqueda para clientes
+        JLabel lblSearch = new JLabel("Buscar:");
+        lblSearch.setFont(new Font("Arial", Font.PLAIN, 18));
+        gbc.gridx = 0;
+        gbc.gridy = 10;
+        gbc.anchor = GridBagConstraints.EAST;
+        panel.add(lblSearch, gbc);
+
+        JTextField txtSearch = new JTextField(15);
+        txtSearch.setFont(new Font("Arial", Font.PLAIN, 16));
+        gbc.gridx = 1;
+        gbc.anchor = GridBagConstraints.WEST;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.weightx = 1.0;
+        panel.add(txtSearch, gbc);
+
+        JButton btnSearch = createStyledButton("Buscar");
+        gbc.gridx = 2;
+        gbc.gridy = 10;
+        gbc.anchor = GridBagConstraints.CENTER;
+        panel.add(btnSearch, gbc);
+
+        btnSearch.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String query = txtSearch.getText().toLowerCase();
+                List<Customer> customers = storeManager.getCustomers();
+                DefaultTableModel searchTableModel = new DefaultTableModel(new Object[]{"ID", "Nombre", "Apellido", "Dirección", "Email", "Teléfono"}, 0);
+                for (Customer customer : customers) {
+                    if (String.valueOf(customer.getId()).toLowerCase().contains(query) ||
+                            customer.getFirstName().toLowerCase().contains(query) ||
+                            customer.getLastName().toLowerCase().contains(query)) {
+                        searchTableModel.addRow(new Object[]{
+                                customer.getId(),
+                                customer.getFirstName(),
+                                customer.getLastName(),
+                                customer.getAddress(),
+                                customer.getEmail(),
+                                customer.getPhone()
+                        });
+                    }
+                }
+                JTable searchTable = new JTable(searchTableModel);
+                JScrollPane searchScrollPane = new JScrollPane(searchTable);
+                JOptionPane.showMessageDialog(panel, searchScrollPane, "Resultados de la búsqueda", JOptionPane.PLAIN_MESSAGE);
+            }
+        });
+
         return panel;
     }
 
@@ -779,10 +849,20 @@ public class MainFrame extends JFrame {
             }
         });
 
-        JPanel buttonPanel = new JPanel(new GridLayout(1, 3, 10, 10));
+        JButton btnReturnSale = createStyledButton("Devolver Componente");
+        btnReturnSale.setBackground(new Color(255, 165, 0));
+        btnReturnSale.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                returnComponent(salesTableModel, salesTable.getSelectedRow());
+            }
+        });
+
+        JPanel buttonPanel = new JPanel(new GridLayout(1, 4, 10, 10));
         buttonPanel.add(btnNewSale);
         buttonPanel.add(btnUpdateSale);
         buttonPanel.add(btnDeleteSale);
+        buttonPanel.add(btnReturnSale);
 
         panel.add(buttonPanel, BorderLayout.SOUTH);
         panel.add(salesPanel, BorderLayout.CENTER);
@@ -1074,17 +1154,85 @@ public class MainFrame extends JFrame {
         }
     }
 
+    private void returnComponent(DefaultTableModel salesTableModel, int selectedRow) {
+        if (selectedRow >= 0) {
+            Sale selectedSale = storeManager.getSales().get(selectedRow);
+            storeManager.returnComponent(selectedSale.getComponent().getId(), selectedSale.getQuantity());
+            salesTableModel.removeRow(selectedRow);
+            JOptionPane.showMessageDialog(null, "Componente devuelto con éxito.");
+        } else {
+            JOptionPane.showMessageDialog(null, "Seleccione una venta para devolver.");
+        }
+    }
+
     private JPanel createWarehouseManagementPanel() {
-        JPanel panel = new JPanel(new BorderLayout());
+        JPanel panel = new JPanel(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+
         JLabel titleLabel = new JLabel("Gestión de Almacén");
         titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
-        titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        panel.add(titleLabel, BorderLayout.NORTH);
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.gridwidth = 2;
+        gbc.insets = new Insets(10, 10, 10, 10);
+        panel.add(titleLabel, gbc);
 
         DefaultTableModel tableModel = new DefaultTableModel(new Object[]{"ID", "Marca", "Modelo", "Cantidad"}, 0);
         JTable table = new JTable(tableModel);
         JScrollPane scrollPane = new JScrollPane(table);
-        panel.add(scrollPane, BorderLayout.CENTER);
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        gbc.gridwidth = 2;
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.weightx = 1.0;
+        gbc.weighty = 1.0;
+        panel.add(scrollPane, gbc);
+
+        // Barra de búsqueda para componentes
+        JLabel lblSearch = new JLabel("Buscar:");
+        lblSearch.setFont(new Font("Arial", Font.PLAIN, 18));
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        gbc.anchor = GridBagConstraints.EAST;
+        panel.add(lblSearch, gbc);
+
+        JTextField txtSearch = new JTextField(15);
+        txtSearch.setFont(new Font("Arial", Font.PLAIN, 16));
+        gbc.gridx = 1;
+        gbc.anchor = GridBagConstraints.WEST;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.weightx = 1.0;
+        panel.add(txtSearch, gbc);
+
+        JButton btnSearch = createStyledButton("Buscar");
+        gbc.gridx = 2;
+        gbc.gridy = 2;
+        gbc.anchor = GridBagConstraints.CENTER;
+        panel.add(btnSearch, gbc);
+
+        btnSearch.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String query = txtSearch.getText().toLowerCase();
+                List<Component> components = storeManager.getComponents();
+                DefaultTableModel searchTableModel = new DefaultTableModel(new Object[]{"ID", "Marca", "Modelo", "Cantidad"}, 0);
+                for (Component component : components) {
+                    if (String.valueOf(component.getId()).toLowerCase().contains(query) ||
+                            component.getBrand().toLowerCase().contains(query) ||
+                            component.getModel().toLowerCase().contains(query)) {
+                        searchTableModel.addRow(new Object[]{
+                                component.getId(),
+                                component.getBrand(),
+                                component.getModel(),
+                                component.getQuantity()
+                        });
+                    }
+                }
+                JTable searchTable = new JTable(searchTableModel);
+                JScrollPane searchScrollPane = new JScrollPane(searchTable);
+                JOptionPane.showMessageDialog(panel, searchScrollPane, "Resultados de la búsqueda", JOptionPane.PLAIN_MESSAGE);
+            }
+        });
 
         JButton btnRestock = createStyledButton("Reabastecer");
         btnRestock.addActionListener(new ActionListener() {
@@ -1108,7 +1256,11 @@ public class MainFrame extends JFrame {
 
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         buttonPanel.add(btnRestock);
-        panel.add(buttonPanel, BorderLayout.SOUTH);
+        gbc.gridx = 0;
+        gbc.gridy = 3;
+        gbc.gridwidth = 2;
+        gbc.anchor = GridBagConstraints.CENTER;
+        panel.add(buttonPanel, gbc);
 
         // Cargar datos al inicio
         updateWarehouseTable(tableModel);
@@ -1195,6 +1347,34 @@ public class MainFrame extends JFrame {
         button.setForeground(Color.WHITE);
         button.setFocusPainted(false);
         return button;
+    }
+
+    private void showReceiptHistory(int customerId) {
+        JFrame historyFrame = new JFrame("Historial de Recibos");
+        historyFrame.setSize(600, 400);
+        historyFrame.setLocationRelativeTo(null);
+
+        JPanel historyPanel = new JPanel(new BorderLayout());
+        historyPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
+
+        DefaultTableModel historyTableModel = new DefaultTableModel(new Object[]{"Fecha", "Componente", "Cantidad", "Precio Total"}, 0);
+        JTable historyTable = new JTable(historyTableModel);
+        JScrollPane historyScrollPane = new JScrollPane(historyTable);
+        historyPanel.add(historyScrollPane, BorderLayout.CENTER);
+
+        for (Sale sale : storeManager.getSales()) {
+            if (sale.getCustomer().getId() == customerId) {
+                historyTableModel.addRow(new Object[]{
+                        sale.getDate(),
+                        sale.getComponent().getBrand() + " " + sale.getComponent().getModel(),
+                        sale.getQuantity(),
+                        sale.getTotalPrice()
+                });
+            }
+        }
+
+        historyFrame.add(historyPanel);
+        historyFrame.setVisible(true);
     }
 
     public static void main(String[] args) {

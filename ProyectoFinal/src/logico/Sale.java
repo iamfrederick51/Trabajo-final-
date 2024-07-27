@@ -1,6 +1,7 @@
 package logico;
 
 import java.io.Serializable;
+import java.util.Date;
 
 public class Sale implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -8,12 +9,14 @@ public class Sale implements Serializable {
     private Component component;
     private int quantity;
     private double totalPrice;
+    private Date date;
 
     public Sale(Customer customer, Component component, int quantity, double totalPrice) {
         this.customer = customer;
         this.component = component;
         this.quantity = quantity;
         this.totalPrice = totalPrice;
+        this.date = new Date(); // Establecer la fecha de la venta al momento de la creación
     }
 
     public Customer getCustomer() {
@@ -32,6 +35,10 @@ public class Sale implements Serializable {
         return totalPrice;
     }
 
+    public Date getDate() {
+        return date;
+    }
+
     public void setCustomer(Customer customer) {
         this.customer = customer;
     }
@@ -46,5 +53,9 @@ public class Sale implements Serializable {
 
     public void setTotalPrice(double totalPrice) {
         this.totalPrice = totalPrice;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
     }
 }
