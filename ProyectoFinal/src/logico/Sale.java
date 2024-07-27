@@ -1,6 +1,9 @@
 package logico;
 
-public class Sale {
+import java.io.Serializable;
+
+public class Sale implements Serializable {
+    private static final long serialVersionUID = 1L;
     private Customer customer;
     private Component component;
     private int quantity;
@@ -29,19 +32,19 @@ public class Sale {
         return totalPrice;
     }
 
-	public void setCustomer(Customer customer) {
-		this.customer = customer;
-	}
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
+    }
 
-	public void setComponent(Component component) {
-		this.component = component;
-	}
+    public void setComponent(Component component) {
+        this.component = component;
+    }
 
-	public void setQuantity(int quantity) {
-		this.quantity = quantity;
-	}
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+    }
 
-	public void setTotalPrice(double totalPrice) {
-		this.totalPrice = totalPrice;
-	}
+    public void setTotalPrice(double totalPrice) {
+        this.totalPrice = totalPrice;
+    }
 }
