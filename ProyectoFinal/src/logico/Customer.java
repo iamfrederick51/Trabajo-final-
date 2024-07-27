@@ -1,15 +1,22 @@
 package logico;
 
-public class Customer {
+import java.io.Serializable;
+
+public class Customer implements Serializable {
+    private static final long serialVersionUID = 1L;
     private int id;
     private String firstName;
     private String lastName;
     private String address;
+    private String email;
+    private String phone;
 
-    public Customer(String firstName, String lastName, String address) {
+    public Customer(String firstName, String lastName, String address, String email, String phone) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.address = address;
+        this.email = email;
+        this.phone = phone;
     }
 
     public int getId() {
@@ -24,23 +31,19 @@ public class Customer {
         return firstName;
     }
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
     public String getLastName() {
         return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
     }
 
     public String getAddress() {
         return address;
     }
 
-    public void setAddress(String address) {
-        this.address = address;
+    public String getEmail() {
+        return email;
+    }
+
+    public String getPhone() {
+        return phone;
     }
 }
