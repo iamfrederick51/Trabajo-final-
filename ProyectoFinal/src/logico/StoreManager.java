@@ -15,6 +15,7 @@ public class StoreManager {
         sales = new ArrayList<>();
     }
 
+    // Component Management
     public void addComponent(Component component) {
         component.setId(components.size() + 1);
         components.add(component);
@@ -76,11 +77,16 @@ public class StoreManager {
         }
     }
 
+    @SuppressWarnings("unchecked")
     public void loadComponents() {
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream("component.dat"))) {
             components = (List<Component>) ois.readObject();
+            if (components == null) {
+                components = new ArrayList<>();
+            }
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
+            components = new ArrayList<>(); // Ensure components is not null
         }
     }
 
@@ -91,6 +97,7 @@ public class StoreManager {
         return components;
     }
 
+    // Customer Management
     public void addCustomer(Customer customer) {
         customer.setId(customers.size() + 1);
         customers.add(customer);
@@ -116,6 +123,7 @@ public class StoreManager {
         return customers;
     }
 
+    // Sale Management
     public void addSale(Sale sale) {
         sales.add(sale);
     }
@@ -137,6 +145,7 @@ public class StoreManager {
         }
     }
 
+    @SuppressWarnings("unchecked")
     public void loadCustomers(String filename) {
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(filename))) {
             customers = (List<Customer>) ois.readObject();
@@ -145,6 +154,25 @@ public class StoreManager {
         }
     }
 
+    public void saveSales(String filename) {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(filename))) {
+            oos.writeObject(sales);
+            oos.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    public void loadSales(String filename) {
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(filename))) {
+            sales = (List<Sale>) ois.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // Component Review
     public Component getComponentById(int componentId) {
         for (Component component : components) {
             if (component.getId() == componentId) {
@@ -160,6 +188,41 @@ public class StoreManager {
             component.addReview(review);
         } else {
             throw new IllegalArgumentException("Componente no encontrado.");
+        }
+    }
+
+    public void updateSale(Sale selectedSale, Customer selectedCustomer, Component selectedComponent, int quantity, double totalPrice) {
+        // Verificar que la venta seleccionada existe en la lista de ventas
+        if (sales.contains(selectedSale)) {
+            // Actualizar la venta con la nueva información
+            selectedSale.setCustomer(selectedCustomer);
+            selectedSale.setComponent(selectedComponent);
+            selectedSale.setQuantity(quantity);
+            selectedSale.setTotalPrice(totalPrice);
+
+            // Actualizar la cantidad del componente en el inventario
+            int componentId = selectedComponent.getId();
+            int oldQuantity = selectedSale.getQuantity();
+            int newQuantity = quantity;
+
+            if (oldQuantity != newQuantity) {
+                int quantityDifference = newQuantity - oldQuantity;
+                if (quantityDifference > 0) {
+                    // Aumentar la cantidad en el inventario
+                    restockComponent(componentId, quantityDifference);
+                } else {
+                    // Reducir la cantidad en el inventario
+                    reduceComponentQuantity(componentId, -quantityDifference);
+                }
+            }
+
+            // Si la cantidad es menor que la cantidad anterior, es necesario devolver la diferencia al inventario
+            if (oldQuantity > newQuantity) {
+                int quantityToReturn = oldQuantity - newQuantity;
+                returnComponent(componentId, quantityToReturn);
+            }
+        } else {
+            throw new IllegalArgumentException("Venta no encontrada en la lista de ventas.");
         }
     }
 }

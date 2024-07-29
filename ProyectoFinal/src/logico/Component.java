@@ -62,4 +62,9 @@ public abstract class Component implements Serializable {
     public List<Review> getReviews() {
         return reviews;
     }
+
+    // Use getQuantity to provide stock information
+    public int getStock() {
+        return getQuantity();
+    }
 }
