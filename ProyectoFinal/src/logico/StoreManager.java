@@ -225,4 +225,14 @@ public class StoreManager {
             throw new IllegalArgumentException("Venta no encontrada en la lista de ventas.");
         }
     }
+    
+    public Customer getCustomerByEmail(String email) {
+        for (Customer customer : customers) {
+            if (customer.getEmail().equalsIgnoreCase(email)) {
+                return customer;
+            }
+        }
+        return null;
+    }
+
 }

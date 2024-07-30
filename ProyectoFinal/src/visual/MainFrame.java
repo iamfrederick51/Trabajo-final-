@@ -771,7 +771,7 @@ public class MainFrame extends JFrame {
         });
 
         // Barra de búsqueda para clientes
-        JLabel lblSearch = new JLabel("Buscar:");
+        JLabel lblSearch = new JLabel("Buscar por Email:");
         lblSearch.setFont(new Font("Arial", Font.PLAIN, 18));
         gbc.gridx = 0;
         gbc.gridy = 10;
@@ -795,26 +795,17 @@ public class MainFrame extends JFrame {
         btnSearch.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String query = txtSearch.getText().toLowerCase();
-                List<Customer> customers = storeManager.getCustomers();
-                DefaultTableModel searchTableModel = new DefaultTableModel(new Object[]{"ID", "Nombre", "Apellido", "Dirección", "Email", "Teléfono"}, 0);
-                for (Customer customer : customers) {
-                    if (String.valueOf(customer.getId()).toLowerCase().contains(query) ||
-                            customer.getFirstName().toLowerCase().contains(query) ||
-                            customer.getLastName().toLowerCase().contains(query)) {
-                        searchTableModel.addRow(new Object[]{
-                                customer.getId(),
-                                customer.getFirstName(),
-                                customer.getLastName(),
-                                customer.getAddress(),
-                                customer.getEmail(),
-                                customer.getPhone()
-                        });
-                    }
+                String emailQuery = txtSearch.getText().trim().toLowerCase();
+                Customer customer = storeManager.getCustomerByEmail(emailQuery);
+                if (customer != null) {
+                    txtFirstName.setText(customer.getFirstName());
+                    txtLastName.setText(customer.getLastName());
+                    txtAddress.setText(customer.getAddress());
+                    txtEmail.setText(customer.getEmail());
+                    txtPhone.setText(customer.getPhone());
+                } else {
+                    JOptionPane.showMessageDialog(panel, "Cliente no encontrado.");
                 }
-                JTable searchTable = new JTable(searchTableModel);
-                JScrollPane searchScrollPane = new JScrollPane(searchTable);
-                JOptionPane.showMessageDialog(panel, searchScrollPane, "Resultados de la búsqueda", JOptionPane.PLAIN_MESSAGE);
             }
         });
 
