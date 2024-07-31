@@ -5,10 +5,14 @@ import logico.Component;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,14 +21,25 @@ public class MainFrame extends JFrame {
     private CardLayout cardLayout;
     private JPanel mainPanel;
     private StoreManager storeManager;
+    private int currentCustomerId = -1; 
 
     public MainFrame() {
         storeManager = new StoreManager();
         storeManager.loadComponents();
         storeManager.loadCustomers("clientes.dat");
-        users.add(new User("admin", "password", "Administrador")); // Default user
+        users.add(new User("admin", "password", "Administrador"));
         initialize();
+
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                storeManager.saveComponents();
+                storeManager.saveCustomers("clientes.dat");
+                System.exit(0);
+            }
+        });
     }
+
 
     private void initialize() {
         setTitle("PC Store La Pulguita");
@@ -67,12 +82,17 @@ public class MainFrame extends JFrame {
         JPasswordField passField = new JPasswordField(15);
         passField.setFont(new Font("Arial", Font.PLAIN, 16));
 
+        JLabel roleLabels = new JLabel("Rol:");
+        roleLabels.setFont(new Font("Arial", Font.PLAIN, 18));
+
         JLabel roleLabel = new JLabel("Rol:");
         roleLabel.setFont(new Font("Arial", Font.PLAIN, 18));
 
         String[] roles = {"Administrador", "Usuario"};
-        JComboBox<String> roleCombo = new JComboBox<>(roles);
+        DefaultComboBoxModel<String> rolesModel = new DefaultComboBoxModel<>(roles);
+        JComboBox<String> roleCombo = new JComboBox<>(rolesModel);
         roleCombo.setFont(new Font("Arial", Font.PLAIN, 16));
+
 
         JButton loginButton = createStyledButton1("Iniciar Sesión");
         loginButton.addActionListener(new ActionListener() {
@@ -161,8 +181,10 @@ public class MainFrame extends JFrame {
         roleLabel.setFont(new Font("Arial", Font.PLAIN, 18));
 
         String[] roles = {"Administrador", "Usuario"};
-        JComboBox<String> roleCombo = new JComboBox<>(roles);
+        DefaultComboBoxModel<String> rolesModel = new DefaultComboBoxModel<>(roles);
+        JComboBox<String> roleCombo = new JComboBox<>(rolesModel);
         roleCombo.setFont(new Font("Arial", Font.PLAIN, 16));
+
 
         JButton createAccountButton = createStyledButton1("Crear Cuenta");
         createAccountButton.addActionListener(new ActionListener() {
@@ -714,21 +736,26 @@ public class MainFrame extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 int selectedRow = table.getSelectedRow();
-                if (selectedRow >= 0) {
-                    int id = (int) tableModel.getValueAt(selectedRow, 0);
-                    String firstName = txtFirstName.getText().trim();
-                    String lastName = txtLastName.getText().trim();
-                    String address = txtAddress.getText().trim();
-                    String email = txtEmail.getText().trim();
-                    String phone = txtPhone.getText().trim();
+                String firstName = txtFirstName.getText().trim();
+                String lastName = txtLastName.getText().trim();
+                String address = txtAddress.getText().trim();
+                String email = txtEmail.getText().trim();
+                String phone = txtPhone.getText().trim();
 
-                    if (validateCustomerFields(firstName, lastName, address, email, phone)) {
-                        Customer customer = new Customer(firstName, lastName, address, email, phone);
+                if (validateCustomerFields(firstName, lastName, address, email, phone)) {
+                    Customer customer = new Customer(firstName, lastName, address, email, phone);
+
+                    if (selectedRow >= 0) {
+                        int id = (int) tableModel.getValueAt(selectedRow, 0);
                         customer.setId(id);
-                        storeManager.updateCustomer(customer);
-                        updateCustomerTable(tableModel);
-                        JOptionPane.showMessageDialog(panel, "Cliente actualizado exitosamente.");
+                    } else if (currentCustomerId != -1) {
+                        customer.setId(currentCustomerId);
                     }
+
+                    storeManager.updateCustomer(customer);
+                    updateCustomerTable(tableModel);
+                    JOptionPane.showMessageDialog(panel, "Cliente actualizado exitosamente.");
+                    currentCustomerId = -1;
                 }
             }
         });
@@ -803,14 +830,33 @@ public class MainFrame extends JFrame {
                     txtAddress.setText(customer.getAddress());
                     txtEmail.setText(customer.getEmail());
                     txtPhone.setText(customer.getPhone());
+                    currentCustomerId = customer.getId();
                 } else {
                     JOptionPane.showMessageDialog(panel, "Cliente no encontrado.");
                 }
             }
         });
 
+       
+        table.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent event) {
+                if (!event.getValueIsAdjusting() && table.getSelectedRow() != -1) {
+                    int selectedRow = table.getSelectedRow();
+                    txtFirstName.setText(tableModel.getValueAt(selectedRow, 1).toString());
+                    txtLastName.setText(tableModel.getValueAt(selectedRow, 2).toString());
+                    txtAddress.setText(tableModel.getValueAt(selectedRow, 3).toString());
+                    txtEmail.setText(tableModel.getValueAt(selectedRow, 4).toString());
+                    txtPhone.setText(tableModel.getValueAt(selectedRow, 5).toString());
+                    currentCustomerId = (int) tableModel.getValueAt(selectedRow, 0);
+                }
+            }
+        });
+
         return panel;
     }
+
+
 
     private boolean validateCustomerFields(String firstName, String lastName, String address, String email, String phone) {
         if (firstName == null || firstName.trim().isEmpty()) {
