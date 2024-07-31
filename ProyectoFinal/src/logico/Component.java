@@ -63,8 +63,11 @@ public abstract class Component implements Serializable {
         return reviews;
     }
 
-    // Use getQuantity to provide stock information
     public int getStock() {
         return getQuantity();
+    }
+
+    public String toString() {
+        return brand + " " + model;
     }
 }

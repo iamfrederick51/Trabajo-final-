@@ -46,4 +46,8 @@ public class Customer implements Serializable {
     public String getPhone() {
         return phone;
     }
+
+    public String toString() {
+        return firstName + " " + lastName;
+    }
 }

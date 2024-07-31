@@ -167,10 +167,15 @@ public class StoreManager {
     public void loadSales(String filename) {
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(filename))) {
             sales = (List<Sale>) ois.readObject();
+            if (sales == null) {
+                sales = new ArrayList<>();
+            }
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
+            sales = new ArrayList<>(); 
         }
     }
+
 
     // Component Review
     public Component getComponentById(int componentId) {

@@ -27,6 +27,7 @@ public class MainFrame extends JFrame {
         storeManager = new StoreManager();
         storeManager.loadComponents();
         storeManager.loadCustomers("clientes.dat");
+        storeManager.loadSales("sales.dat");
         users.add(new User("admin", "password", "Administrador"));
         initialize();
 
@@ -35,10 +36,12 @@ public class MainFrame extends JFrame {
             public void windowClosing(WindowEvent e) {
                 storeManager.saveComponents();
                 storeManager.saveCustomers("clientes.dat");
+                storeManager.saveSales("sales.dat"); 
                 System.exit(0);
             }
         });
     }
+
 
 
     private void initialize() {
@@ -948,214 +951,12 @@ public class MainFrame extends JFrame {
         panel.add(buttonPanel, BorderLayout.SOUTH);
         panel.add(salesPanel, BorderLayout.CENTER);
 
+        // Cargar datos al inicio
+        updateSalesTable(salesTableModel);
+
         return panel;
     }
 
-    private void createNewSale(DefaultTableModel salesTableModel) {
-        JFrame saleFrame = new JFrame("Nueva Venta");
-        saleFrame.setSize(400, 300);
-        saleFrame.setLocationRelativeTo(null);
-
-        JPanel salePanel = new JPanel(new GridBagLayout());
-        salePanel.setBorder(new EmptyBorder(10, 10, 10, 10));
-        GridBagConstraints gbc = new GridBagConstraints();
-
-        // Customer Label
-        JLabel lblCustomer = new JLabel("Cliente:");
-        lblCustomer.setFont(new Font("Arial", Font.PLAIN, 14));
-        lblCustomer.setHorizontalAlignment(SwingConstants.CENTER);
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.anchor = GridBagConstraints.EAST;
-        gbc.insets = new Insets(5, 5, 5, 5);
-        salePanel.add(lblCustomer, gbc);
-
-        // Customer ComboBox
-        JComboBox<Customer> customerComboBox = new JComboBox<>(storeManager.getCustomers().toArray(new Customer[0]));
-        customerComboBox.setFont(new Font("Arial", Font.PLAIN, 14));
-        customerComboBox.setRenderer(new DefaultListCellRenderer() {
-            @Override
-            public java.awt.Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-                java.awt.Component c = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-                setHorizontalAlignment(SwingConstants.CENTER);
-                return c;
-            }
-        });
-        gbc.gridx = 1;
-        gbc.gridy = 0;
-        gbc.anchor = GridBagConstraints.WEST;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.weightx = 1.0;
-        salePanel.add(customerComboBox, gbc);
-
-        // Component Label
-        JLabel lblComponent = new JLabel("Componente:");
-        lblComponent.setFont(new Font("Arial", Font.PLAIN, 14));
-        lblComponent.setHorizontalAlignment(SwingConstants.CENTER);
-        gbc.gridx = 0;
-        gbc.gridy = 1;
-        gbc.anchor = GridBagConstraints.EAST;
-        salePanel.add(lblComponent, gbc);
-
-        // Component ComboBox
-        JComboBox<Component> componentComboBox = new JComboBox<>(storeManager.getComponents().toArray(new Component[0]));
-        componentComboBox.setFont(new Font("Arial", Font.PLAIN, 14));
-        componentComboBox.setRenderer(new DefaultListCellRenderer() {
-            @Override
-            public java.awt.Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-                java.awt.Component c = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-                setHorizontalAlignment(SwingConstants.CENTER);
-                return c;
-            }
-        });
-        gbc.gridx = 1;
-        gbc.gridy = 1;
-        gbc.anchor = GridBagConstraints.WEST;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.weightx = 1.0;
-        salePanel.add(componentComboBox, gbc);
-
-        // Quantity Label
-        JLabel lblQuantity = new JLabel("Cantidad:");
-        lblQuantity.setFont(new Font("Arial", Font.PLAIN, 14));
-        lblQuantity.setHorizontalAlignment(SwingConstants.CENTER);
-        gbc.gridx = 0;
-        gbc.gridy = 2;
-        gbc.anchor = GridBagConstraints.EAST;
-        salePanel.add(lblQuantity, gbc);
-
-        // Quantity TextField
-        JTextField txtQuantity = new JTextField(10);
-        txtQuantity.setFont(new Font("Arial", Font.PLAIN, 14));
-        txtQuantity.setHorizontalAlignment(JTextField.CENTER);
-        gbc.gridx = 1;
-        gbc.gridy = 2;
-        gbc.anchor = GridBagConstraints.WEST;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.weightx = 1.0;
-        salePanel.add(txtQuantity, gbc); ////////////////////////////////
-
-        JLabel lblPrice = new JLabel("Precio Total:");
-        lblPrice.setFont(new Font("Arial", Font.PLAIN, 14));
-        lblPrice.setHorizontalAlignment(SwingConstants.CENTER);
-        gbc.gridx = 0;
-        gbc.gridy = 3;
-        gbc.anchor = GridBagConstraints.EAST;
-        salePanel.add(lblPrice, gbc);
-
-        // Price TextField
-        JTextField txtPrice = new JTextField(10);
-        txtPrice.setFont(new Font("Arial", Font.PLAIN, 14));
-        txtPrice.setEditable(false);
-        txtPrice.setHorizontalAlignment(JTextField.CENTER);
-        gbc.gridx = 1;
-        gbc.gridy = 3;
-        gbc.anchor = GridBagConstraints.WEST;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.weightx = 1.0;
-        salePanel.add(txtPrice, gbc);
-
-        // Calculate Button
-        JButton btnCalculate = createStyledButton1("Calcular Precio");
-        gbc.gridx = 0;
-        gbc.gridy = 4;
-        gbc.gridwidth = 2;
-        gbc.anchor = GridBagConstraints.CENTER;
-        gbc.insets = new Insets(10, 0, 10, 0);
-        salePanel.add(btnCalculate, gbc);
-
-        // Complete Sale Button
-        JButton btnCompleteSale = createStyledButton1("Completar Venta");
-        gbc.gridx = 0;
-        gbc.gridy = 5;
-        gbc.gridwidth = 2;
-        gbc.anchor = GridBagConstraints.CENTER;
-        salePanel.add(btnCompleteSale, gbc); ////////////////////////////////////
-
-        btnCalculate.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                Component selectedComponent = (Component) componentComboBox.getSelectedItem();
-                String quantityStr = txtQuantity.getText();
-                if (selectedComponent != null && !quantityStr.trim().isEmpty()) {
-                    try {
-                        int quantity = Integer.parseInt(quantityStr);
-                        if (quantity <= selectedComponent.getStock()) {
-                            double totalPrice = selectedComponent.getPrice() * quantity;
-                            txtPrice.setText(String.valueOf(totalPrice));
-                        } else {
-                            JOptionPane.showMessageDialog(saleFrame, "Cantidad supera stock disponible.");
-                        }
-                    } catch (NumberFormatException ex) {
-                        JOptionPane.showMessageDialog(saleFrame, "Cantidad inválida.");
-                    }
-                } else {
-                    JOptionPane.showMessageDialog(saleFrame, "Complete todos los campos.");
-                }
-            }
-        });
-
-        // Complete Sale Button Action
-        btnCompleteSale.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                Customer selectedCustomer = (Customer) customerComboBox.getSelectedItem();
-                Component selectedComponent = (Component) componentComboBox.getSelectedItem();
-                String quantityStr = txtQuantity.getText();
-                String priceStr = txtPrice.getText();
-
-                if (selectedCustomer != null && selectedComponent != null && !quantityStr.trim().isEmpty() && !priceStr.trim().isEmpty()) {
-                    try {
-                        int quantity = Integer.parseInt(quantityStr);
-                        double totalPrice = Double.parseDouble(priceStr);
-
-                        if (quantity <= selectedComponent.getStock()) {
-                            storeManager.reduceComponentQuantity(selectedComponent.getId(), quantity);
-                            storeManager.addSale(new Sale(selectedCustomer, selectedComponent, quantity, totalPrice));
-                            salesTableModel.addRow(new Object[]{
-                                    selectedCustomer.getFirstName() + " " + selectedCustomer.getLastName(),
-                                    selectedComponent.getBrand() + " " + selectedComponent.getModel(),
-                                    quantity,
-                                    totalPrice
-                            });
-                            JOptionPane.showMessageDialog(saleFrame, "Venta completada con éxito.");
-
-                            // Prompt for review
-                            int reviewOption = JOptionPane.showConfirmDialog(saleFrame, "¿Desea dejar un review para el componente comprado?", "Dejar Review", JOptionPane.YES_NO_OPTION);
-                            if (reviewOption == JOptionPane.YES_OPTION) {
-                                String reviewText = JOptionPane.showInputDialog(saleFrame, "Ingrese su review:");
-                                String ratingStr = JOptionPane.showInputDialog(saleFrame, "Ingrese su calificación (1-5):");
-                                try {
-                                    int rating = Integer.parseInt(ratingStr);
-                                    if (rating >= 1 && rating <= 5) {
-                                        Review review = new Review(reviewText, rating);
-                                        selectedComponent.addReview(review);
-                                        storeManager.saveComponents();  // Ensure components are saved
-                                        JOptionPane.showMessageDialog(saleFrame, "Gracias por su review.");
-                                    } else {
-                                        JOptionPane.showMessageDialog(saleFrame, "Calificación inválida.");
-                                    }
-                                } catch (NumberFormatException ex) {
-                                    JOptionPane.showMessageDialog(saleFrame, "Entrada de calificación inválida.");
-                                }
-                            }
-
-                            saleFrame.dispose();
-                        } else {
-                            JOptionPane.showMessageDialog(saleFrame, "Cantidad supera stock disponible.");
-                        }
-                    } catch (IllegalArgumentException ex) {
-                        JOptionPane.showMessageDialog(saleFrame, "Error: " + ex.getMessage());
-                    }
-                } else {
-                    JOptionPane.showMessageDialog(saleFrame, "Complete todos los campos.");
-                }
-            }
-        });
-
-        saleFrame.add(salePanel);
-        saleFrame.setVisible(true);
-    }
 
 
     private void updateSale(DefaultTableModel salesTableModel, int selectedRow) {
@@ -1172,23 +973,15 @@ public class MainFrame extends JFrame {
 
             JLabel lblCustomer = new JLabel("Cliente:");
             lblCustomer.setFont(new Font("Arial", Font.PLAIN, 14));
-            lblCustomer.setHorizontalAlignment(SwingConstants.CENTER); // Centrar texto
+            lblCustomer.setHorizontalAlignment(SwingConstants.CENTER);
             gbc.gridx = 0;
             gbc.gridy = 0;
             gbc.anchor = GridBagConstraints.EAST;
             gbc.insets = new Insets(5, 5, 5, 5);
             updatePanel.add(lblCustomer, gbc);
 
-            JComboBox<Customer> customerComboBox = new JComboBox<>(storeManager.getCustomers().toArray(new Customer[0]));
+            JComboBox<Customer> customerComboBox = new JComboBox<>(new DefaultComboBoxModel<>(storeManager.getCustomers().toArray(new Customer[0])));
             customerComboBox.setFont(new Font("Arial", Font.PLAIN, 14));
-            customerComboBox.setRenderer(new DefaultListCellRenderer() {
-                @Override
-                public java.awt.Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-                    java.awt.Component c = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-                    setHorizontalAlignment(SwingConstants.CENTER); // Centrar texto
-                    return c;
-                }
-            });
             customerComboBox.setSelectedItem(selectedSale.getCustomer());
             gbc.gridx = 1;
             gbc.gridy = 0;
@@ -1199,22 +992,14 @@ public class MainFrame extends JFrame {
 
             JLabel lblComponent = new JLabel("Componente:");
             lblComponent.setFont(new Font("Arial", Font.PLAIN, 14));
-            lblComponent.setHorizontalAlignment(SwingConstants.CENTER); // Centrar texto
+            lblComponent.setHorizontalAlignment(SwingConstants.CENTER);
             gbc.gridx = 0;
             gbc.gridy = 1;
             gbc.anchor = GridBagConstraints.EAST;
             updatePanel.add(lblComponent, gbc);
 
-            JComboBox<Component> componentComboBox = new JComboBox<>(storeManager.getComponents().toArray(new Component[0]));
+            JComboBox<Component> componentComboBox = new JComboBox<>(new DefaultComboBoxModel<>(storeManager.getComponents().toArray(new Component[0])));
             componentComboBox.setFont(new Font("Arial", Font.PLAIN, 14));
-            componentComboBox.setRenderer(new DefaultListCellRenderer() {
-                @Override
-                public java.awt.Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-                    java.awt.Component c = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-                    setHorizontalAlignment(SwingConstants.CENTER); // Centrar texto
-                    return c;
-                }
-            });
             componentComboBox.setSelectedItem(selectedSale.getComponent());
             gbc.gridx = 1;
             gbc.gridy = 1;
@@ -1225,7 +1010,7 @@ public class MainFrame extends JFrame {
 
             JLabel lblQuantity = new JLabel("Cantidad:");
             lblQuantity.setFont(new Font("Arial", Font.PLAIN, 14));
-            lblQuantity.setHorizontalAlignment(SwingConstants.CENTER); // Centrar texto
+            lblQuantity.setHorizontalAlignment(SwingConstants.CENTER);
             gbc.gridx = 0;
             gbc.gridy = 2;
             gbc.anchor = GridBagConstraints.EAST;
@@ -1233,7 +1018,7 @@ public class MainFrame extends JFrame {
 
             JTextField txtQuantity = new JTextField(String.valueOf(selectedSale.getQuantity()), 10);
             txtQuantity.setFont(new Font("Arial", Font.PLAIN, 14));
-            txtQuantity.setHorizontalAlignment(JTextField.CENTER); // Centrar texto
+            txtQuantity.setHorizontalAlignment(JTextField.CENTER);
             gbc.gridx = 1;
             gbc.gridy = 2;
             gbc.anchor = GridBagConstraints.WEST;
@@ -1243,7 +1028,7 @@ public class MainFrame extends JFrame {
 
             JLabel lblPrice = new JLabel("Precio Total:");
             lblPrice.setFont(new Font("Arial", Font.PLAIN, 14));
-            lblPrice.setHorizontalAlignment(SwingConstants.CENTER); // Centrar texto
+            lblPrice.setHorizontalAlignment(SwingConstants.CENTER);
             gbc.gridx = 0;
             gbc.gridy = 3;
             gbc.anchor = GridBagConstraints.EAST;
@@ -1251,7 +1036,7 @@ public class MainFrame extends JFrame {
 
             JTextField txtPrice = new JTextField(String.valueOf(selectedSale.getTotalPrice()), 10);
             txtPrice.setFont(new Font("Arial", Font.PLAIN, 14));
-            txtPrice.setHorizontalAlignment(JTextField.CENTER); // Centrar texto
+            txtPrice.setHorizontalAlignment(JTextField.CENTER);
             gbc.gridx = 1;
             gbc.gridy = 3;
             gbc.anchor = GridBagConstraints.WEST;
@@ -1269,7 +1054,7 @@ public class MainFrame extends JFrame {
 
             btnUpdate.addActionListener(new ActionListener() {
                 @Override
-                public void actionPerformed(ActionEvent e) throws NumberFormatException {
+                public void actionPerformed(ActionEvent e) {
                     Customer selectedCustomer = (Customer) customerComboBox.getSelectedItem();
                     Component selectedComponent = (Component) componentComboBox.getSelectedItem();
                     String quantityStr = txtQuantity.getText();
@@ -1287,8 +1072,8 @@ public class MainFrame extends JFrame {
                             salesTableModel.setValueAt(totalPrice, selectedRow, 3);
                             JOptionPane.showMessageDialog(updateFrame, "Venta actualizada con éxito.");
                             updateFrame.dispose();
-                        } catch (IllegalArgumentException ex) {
-                            JOptionPane.showMessageDialog(updateFrame, "Error: " + ex.getMessage());
+                        } catch (NumberFormatException ex) {
+                            JOptionPane.showMessageDialog(updateFrame, "Cantidad o precio inválidos.");
                         }
                     } else {
                         JOptionPane.showMessageDialog(updateFrame, "Complete todos los campos.");
@@ -1302,6 +1087,169 @@ public class MainFrame extends JFrame {
             JOptionPane.showMessageDialog(null, "Seleccione una venta para actualizar.");
         }
     }
+    
+    private void createNewSale(DefaultTableModel salesTableModel) {
+        JFrame saleFrame = new JFrame("Nueva Venta");
+        saleFrame.setSize(400, 300);
+        saleFrame.setLocationRelativeTo(null);
+
+        JPanel salePanel = new JPanel(new GridBagLayout());
+        salePanel.setBorder(new EmptyBorder(10, 10, 10, 10));
+        GridBagConstraints gbc = new GridBagConstraints();
+
+        JLabel lblCustomer = new JLabel("Cliente:");
+        lblCustomer.setFont(new Font("Arial", Font.PLAIN, 14));
+        lblCustomer.setHorizontalAlignment(SwingConstants.CENTER);
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.anchor = GridBagConstraints.EAST;
+        gbc.insets = new Insets(5, 5, 5, 5);
+        salePanel.add(lblCustomer, gbc);
+
+        JComboBox<Customer> customerComboBox = new JComboBox<>(new DefaultComboBoxModel<>(storeManager.getCustomers().toArray(new Customer[0])));
+        customerComboBox.setFont(new Font("Arial", Font.PLAIN, 14));
+        gbc.gridx = 1;
+        gbc.gridy = 0;
+        gbc.anchor = GridBagConstraints.WEST;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.weightx = 1.0;
+        salePanel.add(customerComboBox, gbc);
+
+        JLabel lblComponent = new JLabel("Componente:");
+        lblComponent.setFont(new Font("Arial", Font.PLAIN, 14));
+        lblComponent.setHorizontalAlignment(SwingConstants.CENTER);
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        gbc.anchor = GridBagConstraints.EAST;
+        salePanel.add(lblComponent, gbc);
+
+        JComboBox<Component> componentComboBox = new JComboBox<>(new DefaultComboBoxModel<>(storeManager.getComponents().toArray(new Component[0])));
+        componentComboBox.setFont(new Font("Arial", Font.PLAIN, 14));
+        gbc.gridx = 1;
+        gbc.gridy = 1;
+        gbc.anchor = GridBagConstraints.WEST;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.weightx = 1.0;
+        salePanel.add(componentComboBox, gbc);
+
+        JLabel lblQuantity = new JLabel("Cantidad:");
+        lblQuantity.setFont(new Font("Arial", Font.PLAIN, 14));
+        lblQuantity.setHorizontalAlignment(SwingConstants.CENTER);
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        gbc.anchor = GridBagConstraints.EAST;
+        salePanel.add(lblQuantity, gbc);
+
+        JTextField txtQuantity = new JTextField(10);
+        txtQuantity.setFont(new Font("Arial", Font.PLAIN, 14));
+        txtQuantity.setHorizontalAlignment(JTextField.CENTER);
+        gbc.gridx = 1;
+        gbc.gridy = 2;
+        gbc.anchor = GridBagConstraints.WEST;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.weightx = 1.0;
+        salePanel.add(txtQuantity, gbc);
+
+        JLabel lblPrice = new JLabel("Precio Total:");
+        lblPrice.setFont(new Font("Arial", Font.PLAIN, 14));
+        lblPrice.setHorizontalAlignment(SwingConstants.CENTER);
+        gbc.gridx = 0;
+        gbc.gridy = 3;
+        gbc.anchor = GridBagConstraints.EAST;
+        salePanel.add(lblPrice, gbc);
+
+        JTextField txtPrice = new JTextField(10);
+        txtPrice.setFont(new Font("Arial", Font.PLAIN, 14));
+        txtPrice.setEditable(false);
+        txtPrice.setHorizontalAlignment(JTextField.CENTER);
+        gbc.gridx = 1;
+        gbc.gridy = 3;
+        gbc.anchor = GridBagConstraints.WEST;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.weightx = 1.0;
+        salePanel.add(txtPrice, gbc);
+
+        JButton btnCalculate = createStyledButton1("Calcular Precio");
+        gbc.gridx = 0;
+        gbc.gridy = 4;
+        gbc.gridwidth = 2;
+        gbc.anchor = GridBagConstraints.CENTER;
+        gbc.insets = new Insets(10, 0, 10, 0);
+        salePanel.add(btnCalculate, gbc);
+
+        JButton btnCompleteSale = createStyledButton1("Completar Venta");
+        gbc.gridx = 0;
+        gbc.gridy = 5;
+        gbc.gridwidth = 2;
+        gbc.anchor = GridBagConstraints.CENTER;
+        salePanel.add(btnCompleteSale, gbc);
+
+        btnCalculate.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Component selectedComponent = (Component) componentComboBox.getSelectedItem();
+                String quantityStr = txtQuantity.getText();
+                if (selectedComponent != null && !quantityStr.trim().isEmpty()) {
+                    try {
+                        int quantity = Integer.parseInt(quantityStr);
+                        if (quantity <= selectedComponent.getQuantity()) {
+                            double totalPrice = selectedComponent.getPrice() * quantity;
+                            txtPrice.setText(String.valueOf(totalPrice));
+                        } else {
+                            JOptionPane.showMessageDialog(saleFrame, "Cantidad supera stock disponible.");
+                        }
+                    } catch (NumberFormatException ex) {
+                        JOptionPane.showMessageDialog(saleFrame, "Cantidad inválida.");
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(saleFrame, "Complete todos los campos.");
+                }
+            }
+        });
+
+        btnCompleteSale.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Customer selectedCustomer = (Customer) customerComboBox.getSelectedItem();
+                Component selectedComponent = (Component) componentComboBox.getSelectedItem();
+                String quantityStr = txtQuantity.getText();
+                String priceStr = txtPrice.getText();
+
+                if (selectedCustomer != null && selectedComponent != null && !quantityStr.trim().isEmpty() && !priceStr.trim().isEmpty()) {
+                    try {
+                        int quantity = Integer.parseInt(quantityStr);
+                        double totalPrice = Double.parseDouble(priceStr);
+
+                        if (quantity <= selectedComponent.getQuantity()) {
+                            storeManager.reduceComponentQuantity(selectedComponent.getId(), quantity);
+                            Sale sale = new Sale(selectedCustomer, selectedComponent, quantity, totalPrice);
+                            storeManager.addSale(sale);
+                            storeManager.saveSales("sales.dat");
+                            salesTableModel.addRow(new Object[]{
+                                    selectedCustomer.getFirstName() + " " + selectedCustomer.getLastName(),
+                                    selectedComponent.getBrand() + " " + selectedComponent.getModel(),
+                                    quantity,
+                                    totalPrice
+                            });
+                            JOptionPane.showMessageDialog(saleFrame, "Venta completada con éxito.");
+                            saleFrame.dispose();
+                        } else {
+                            JOptionPane.showMessageDialog(saleFrame, "Cantidad supera stock disponible.");
+                        }
+                    } catch (NumberFormatException ex) {
+                        JOptionPane.showMessageDialog(saleFrame, "Cantidad inválida.");
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(saleFrame, "Complete todos los campos.");
+                }
+            }
+        });
+
+        saleFrame.add(salePanel);
+        saleFrame.setVisible(true);
+    }
+
+
 
     private void deleteSale(DefaultTableModel salesTableModel, int selectedRow) {
         if (selectedRow >= 0) {
@@ -1315,6 +1263,7 @@ public class MainFrame extends JFrame {
         }
     }
 
+
     private void returnComponent(DefaultTableModel salesTableModel, int selectedRow) {
         if (selectedRow >= 0) {
             Sale selectedSale = storeManager.getSales().get(selectedRow);
@@ -1325,6 +1274,7 @@ public class MainFrame extends JFrame {
             JOptionPane.showMessageDialog(null, "Seleccione una venta para devolver.");
         }
     }
+
 
     private JPanel createWarehouseManagementPanel() {
         JPanel panel = new JPanel(new GridBagLayout());
